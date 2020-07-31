@@ -1,0 +1,20 @@
+{
+  "private": true,
+  "name": "twam-app-spike",
+  "version": "1.0.0",
+  "description": "TWAM app spike.",
+  "scripts": {
+    "dev": "eleventy --serve",
+    "build": "eleventy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OpenDirective/TWAM-App"
+  },
+  "author": "Steve Lee <steve@opendirective.com>",
+  "license": "proprietary",
+  "homepage": "https://deploy-preview-3--twam-gallant-swirles-d68516.netlify.app/",
+  "devDependencies": {
+    "@11ty/eleventy": "^0.11.0"
+  }
+}

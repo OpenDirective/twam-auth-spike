@@ -1,0 +1,152 @@
+<style>
+  .twam-app-header {
+    display: grid;
+    grid: 1fr / 4fr 1fr 1fr;
+    grid-gap: 1rem;
+    justify-content: space-between;
+    background: var(--twam-blue);
+    font-family: var(--font-family);
+    position: relative;
+    color: var(--white);
+    width: 100%;
+  }
+
+  .twam-app-header .logo-wrapper {
+    align-items: center;
+    display: flex;
+    height: 56px;
+    justify-content: flex-start;
+    padding: 0 1rem;
+    position: relative;
+  }
+
+  .twam-app-header .logo {
+    display: block;
+    height: auto;
+    position: relative;
+    transform: rotate(-3deg);
+    transition: transform 250ms ease-out;
+    width: 75px;
+    z-index: 15;
+    border: white 1px solid;
+  }
+
+  .twam-app-header .logo:active,
+  .twam-app-header .logo:focus,
+  .twam-app-header .logo:hover {
+    transform: rotate(0deg);
+  }
+
+  .twam-app-header .logo:active::after,
+  .twam-app-header .logo:focus::after,
+  .twam-app-header .logo:hover::after {
+    opacity: 1;
+  }
+
+  .twam-app-header .logo img {
+    display: block;
+    width: 100%;
+  }
+
+  .twam-app-header .title {
+    color: var(--white);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-left: 0.75rem;
+    position: relative;
+  }
+
+  .twam-app-header #name,
+  .twam-app-header button {
+    color: var(--white);
+    display: block;
+    font-family: var(--font-family);
+    font-size: 1.4rem;
+    font-weight: 700;
+    padding: 0.4rem;
+    margin: 0.5rem;
+    text-align: center;
+  }
+
+  .twam-app-header #name .role {
+    font-size: small;
+  }
+
+  .twam-app-header button {
+    background: var(--twam-red);
+    border: var(--white) solid 2px;
+    border-radius: 40px;
+  }
+
+  .twam-app-header button.hidden,
+  .twam-app-header #name.hidden {
+    display: none;
+  }
+</style>
+
+<header class="twam-app-header">
+  <div class="logo-wrapper">
+    <a href="/" class="logo"
+      ><img src="/images/TWAM.png" alt="TWAM App Logo"
+    /></a>
+    <span class="title">TWAM App: Application and Offer Spike</span>
+  </div>
+
+  <button id="signup" class="hidden">Sign Up</button>
+  <button id="login" class="hidden">Log In</button>
+  <button id="logout" class="hidden">Log Out</button>
+  <div id="name" class="hidden"></div>
+</header>
+
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+<script defer>
+  function renderUser() {
+    netlifyIdentity.setLocale('en')
+
+    const signupButton = document.getElementById('signup')
+    const loginButton = document.getElementById('login')
+    const logoutButton = document.getElementById('logout')
+    signupButton.addEventListener('click', () => netlifyIdentity.open('signup'))
+    loginButton.addEventListener('click', () => netlifyIdentity.open('login'))
+    logoutButton.addEventListener('click', () => netlifyIdentity.logout())
+    const nameDiv = document.getElementById('name')
+
+    function updateUserInfo(user, event) {
+      if (user) {
+        const { full_name } = user.user_metadata
+        const role = user.role != '' ? user.role : 'app'
+
+        signupButton.classList.add('hidden')
+        loginButton.classList.add('hidden')
+        logoutButton.classList.remove('hidden')
+        nameDiv.innerHTML = `${full_name}<br><span class="role">role: ${role}</span>` //TODO handle long names
+        nameDiv.classList.remove('hidden')
+      } else {
+        signupButton.classList.remove('hidden')
+        loginButton.classList.remove('hidden')
+        logoutButton.classList.add('hidden')
+        nameDiv.innerText = ''
+        nameDiv.classList.add('hidden')
+      }
+    }
+
+    const handleUserStateChange = (user, event) => {
+      updateUserInfo(user, event)
+    }
+
+    // TODO - handle init followed by login
+    netlifyIdentity.on('init', (user) => {
+      handleUserStateChange(user, 'init')
+    })
+    netlifyIdentity.on('login', (user) => {
+      handleUserStateChange(user, 'login')
+    })
+    netlifyIdentity.on('logout', (user) => {
+      handleUserStateChange(user, 'logout')
+    })
+    netlifyIdentity.on('error', (err) => console.error('Error', err))
+  }
+
+  renderUser()
+</script>
