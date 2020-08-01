@@ -114,6 +114,7 @@
 
     function updateUserInfo(user, event) {
       if (user) {
+        console.log(user)
         const { full_name } = user.user_metadata
         const role = user.role != '' ? user.role : 'app'
 
