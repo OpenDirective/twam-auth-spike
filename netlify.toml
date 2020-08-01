@@ -6,7 +6,7 @@
 [dev]
   command = "npm run dev"
 
-[[redirects]]
+[[sredirects]]
   from = "/rdm/*"
   status = 200
   conditions = {Role = ["rdm"]}
