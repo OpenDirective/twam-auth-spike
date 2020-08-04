@@ -1,1 +1,3 @@
 /rdm/*	200!	Role=admin
+/applicant/* 200! Role=
+

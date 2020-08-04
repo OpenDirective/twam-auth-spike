@@ -82,6 +82,22 @@
   .twam-app-header #name.hidden {
     display: none;
   }
+
+  .menu {
+    margin-left: 2rem;
+  }
+  .menu a {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+  .menu a:link {
+    color: white;
+  }
+  .menu a:visited {
+    color: var(--blue);
+  }
 </style>
 
 <header class="twam-app-header">
@@ -89,7 +105,11 @@
     <a href="/" class="logo"
       ><img src="/images/TWAM.png" alt="TWAM App Logo"
     /></a>
-    <span class="title">TWAM App: Application and Offer Spike</span>
+    <span class="title">TWAM App: Proof of concept:</span>
+    <span class="menu"
+      ><a href="/all">Public</a> | <a href="/applicant">Applicant</a> |
+      <a href="/rdm">RDM</a></span
+    >
   </div>
 
   <button id="signup" class="hidden">Sign Up</button>
@@ -112,19 +132,20 @@
     logoutButton.addEventListener('click', () => netlifyIdentity.logout())
     const nameDiv = document.getElementById('name')
 
-    function getRoles(roles) {
-      return roles.length != 0 ? roles.join(', ') : 'app'
+    function getRoles(user) {
+      const roles = user.app_metadata.roles
+      return roles.length != 0 ? roles.join(', ') : 'applicant'
     }
 
     function updateUserInfo(user, event) {
       if (user) {
         const { full_name } = user.user_metadata
-        const roles = getRoles(user.app_metadata.roles)
+        const roles = getRoles(user)
 
         signupButton.classList.add('hidden')
         loginButton.classList.add('hidden')
         logoutButton.classList.remove('hidden')
-        nameDiv.innerHTML = `${full_name}<br><span class="role">${roles}</span>` //TODO handle long names
+        nameDiv.innerHTML = `${full_name}` //TODO handle long names
         nameDiv.classList.remove('hidden')
       } else {
         signupButton.classList.remove('hidden')
@@ -135,7 +156,17 @@
       }
     }
 
+    function updateHomePageMsg(user) {
+      const msg = document.querySelector('#home-message')
+      msg.innerHTML = user
+        ? `Welcome ${
+            user.user_metadata.full_name
+          }.<br/><br/>You have the role(s) "${getRoles(user)}."`
+        : 'Please log into your account.<br /><br />Sign Up first if you need an account.'
+    }
+
     const handleUserStateChange = (user, event) => {
+      updateHomePageMsg(user)
       updateUserInfo(user, event)
     }
 
@@ -144,6 +175,7 @@
       handleUserStateChange(user, 'init')
     })
     netlifyIdentity.on('login', (user) => {
+      netlifyIdentity.close()
       handleUserStateChange(user, 'login')
     })
     netlifyIdentity.on('logout', (user) => {
