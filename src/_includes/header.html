@@ -164,7 +164,7 @@
       msg.innerHTML = user
         ? `Welcome ${
             user.user_metadata.full_name
-          }.<br/><br/>You have the role(s) "${getRolesText(user)}."`
+          }.<br/><br/>You have the role(s) "${getRolesText(user)}".`
         : 'Please log into your account.<br /><br />Sign Up first if you need an account.'
     }
 
@@ -182,6 +182,7 @@
       handleUserStateChange(user, 'login')
     })
     netlifyIdentity.on('logout', (user) => {
+      netlifyIdentity.close()
       handleUserStateChange(user, 'logout')
     })
     netlifyIdentity.on('error', (err) => console.error('Error', err))
