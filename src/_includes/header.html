@@ -158,6 +158,9 @@
 
     function updateHomePageMsg(user) {
       const msg = document.querySelector('#home-message')
+      if (!msg) {
+        return
+      }
       msg.innerHTML = user
         ? `Welcome ${
             user.user_metadata.full_name
