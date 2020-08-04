@@ -132,15 +132,15 @@
     logoutButton.addEventListener('click', () => netlifyIdentity.logout())
     const nameDiv = document.getElementById('name')
 
-    function getRoles(user) {
+    function getRolesText(user) {
       const roles = user.app_metadata.roles
-      return roles.length != 0 ? roles.join(', ') : 'applicant'
+      return roles && roles.length != 0 ? roles.join(', ') : ''
     }
 
     function updateUserInfo(user, event) {
       if (user) {
         const { full_name } = user.user_metadata
-        const roles = getRoles(user)
+        const roles = getRolesText(user)
 
         signupButton.classList.add('hidden')
         loginButton.classList.add('hidden')
@@ -164,7 +164,7 @@
       msg.innerHTML = user
         ? `Welcome ${
             user.user_metadata.full_name
-          }.<br/><br/>You have the role(s) "${getRoles(user)}."`
+          }.<br/><br/>You have the role(s) "${getRolesText(user)}."`
         : 'Please log into your account.<br /><br />Sign Up first if you need an account.'
     }
 
