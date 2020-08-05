@@ -195,10 +195,10 @@
       }
     }
     netlifyIdentity.on('open', (_) => {
-      document.body.addEventListener('keypress', handleEsc)
+      document.body.addEventListener('keydown', handleEsc)
     })
     netlifyIdentity.on('close', (_) => {
-      document.body.removeEventListener('keypress', handleEsc)
+      document.body.removeEventListener('keydown', handleEsc)
     })
     netlifyIdentity.on('error', (err) => console.error('Error', err))
   }
