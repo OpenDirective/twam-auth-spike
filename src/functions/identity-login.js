@@ -3,24 +3,16 @@ exports.handler = async (event) => {
   const promise = new Promise(function (resolve, reject) {
     const { user } = JSON.parse(event.body)
     const { roles: currentRoles } = user.app_metadata
-    const roles =
-      currentRoles === undefined || currentRoles.length == 0
-        ? ['applicant']
-        : undefined
-    const bodyString = roles
-      ? JSON.stringify({
-          app_metadata: {
-            roles,
-          },
-        })
-      : undefined
 
-    const response = {
-      statusCode: 200,
-      ...(bodyString ? { body: bodyString } : {}),
+    let body = {}
+    if (!currentRoles || currentRoles.length == 0) {
+      body = {
+        body: JSON.stringify({ app_metadata: { roles: ['applicant'] } }),
+      }
     }
 
-    resolve(response)
+    resolve({ statusCode: 200, ...body })
   })
+
   return promise
 }
