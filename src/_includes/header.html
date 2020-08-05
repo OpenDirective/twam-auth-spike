@@ -194,14 +194,12 @@
         netlifyIdentity.close()
       }
     }
-    netlifyIdentity.on(
-      'open',
-      document.body.addEventListener('keypress', handleEsc),
-    )
-    netlifyIdentity.on(
-      'close',
-      document.body.removeEventListener('keypress', handleEsc),
-    )
+    netlifyIdentity.on('open', (_) => {
+      document.body.addEventListener('keypress', handleEsc)
+    })
+    netlifyIdentity.on('close', (_) => {
+      document.body.removeEventListener('keypress', handleEsc)
+    })
     netlifyIdentity.on('error', (err) => console.error('Error', err))
   }
 
