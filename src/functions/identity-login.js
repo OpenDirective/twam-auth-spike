@@ -1,4 +1,11 @@
-exports.handler = (event) => {
+exports.handler = (event, context, callback) => {
+  console.log('e', event, 'c', context, 'cb', callback)
+
+  return {
+    statusCode: 200,
+  }
+
+  /*
   const { user } = JSON.parse(event.body)
   const { roles } = user.app_metadata
 
@@ -14,5 +21,5 @@ exports.handler = (event) => {
             },
           })
         : '',
-  }
+  }*/
 }
