@@ -19,7 +19,7 @@ layout: default.njk
   }
 
   #message a:link {
-    color: white;
+    color: var(--white);
   }
   #message a:visited {
     color: var(--blue);
@@ -27,7 +27,7 @@ layout: default.njk
 </style>
 
 <div class="centred">
-  <h1 id="message">{{ content | safe }}</h1>
+  <div id="message">{{ content | safe }}</div>
 </div>
 
 <script defer></script>

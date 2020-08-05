@@ -136,7 +136,7 @@
       const roles = user.app_metadata.roles
       return roles && roles.length != 0 && roles[0] != ''
         ? roles.join(', ')
-        : '[none];'
+        : '[none]'
     }
 
     function updateUserInfo(user, event) {
@@ -164,10 +164,10 @@
       }
 
       msg.innerHTML = user
-        ? `Welcome ${
+        ? `<h1>Welcome ${
             user.user_metadata.full_name
-          }.<br/><br/>You have the role(s) "${getRolesText(user)}".`
-        : 'Please log into your account.<br /><br />Sign Up first if you need an account.'
+          }.<br/><br/>You have the role(s) "${getRolesText(user)}".</h1>`
+        : '<h1>Please log into your account.<br /><br />Sign Up first if you need an account.</h1>'
     }
 
     const handleUserStateChange = (user, event) => {
