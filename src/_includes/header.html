@@ -179,19 +179,13 @@
 
     // TODO - handle init followed by login
     netlifyIdentity.on('init', (user) => {
-      console.log('init')
       handleUserStateChange(user, 'init')
     })
     netlifyIdentity.on('login', (user) => {
-      console.log('login')
-      fetch('/.netlify/functions/init-roles')
-        .then((response) => response.json())
-        .then((data) => console.log(data))
       netlifyIdentity.close()
       handleUserStateChange(user, 'login')
     })
     netlifyIdentity.on('logout', (user) => {
-      console.log('logout')
       netlifyIdentity.close()
       handleUserStateChange(user, 'logout')
     })
