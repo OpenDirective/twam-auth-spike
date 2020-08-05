@@ -1,11 +1,12 @@
 module.exports = (config) => {
-  config.addPassthroughCopy('src/css')
-  config.addPassthroughCopy('src/images')
-  config.addPassthroughCopy('src/js')
-  config.addPassthroughCopy({ 'src/favicons/': '/' })
-  config.addPassthroughCopy({ 'src/sitefiles/': '/' })
+  require('./src/_11ty/passthrough').passthroughCopy(config)
 
   return {
+    templateFormats: ['md', 'njk', 'html'],
+    markdownTemplateEngine: 'njk',
+    htmlTemplateEngine: 'njk',
+    dataTemplateEngine: 'njk',
+
     dir: {
       input: 'src',
     },
