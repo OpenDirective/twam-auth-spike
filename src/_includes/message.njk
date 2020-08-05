@@ -1,0 +1,26 @@
+---
+layout: default.njk
+---
+<style>
+  main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .centred {
+    background: var(--twam-grey);
+    border-radius: 1rem;
+    padding: 2rem;
+  }
+
+  .centred h1 {
+    color: var(--white);
+  }
+</style>
+
+<div class="centred">
+  <h1 id="home-message">{{ content | safe }}</h1>
+</div>
+
+<script defer></script>
