@@ -184,6 +184,9 @@
     })
     netlifyIdentity.on('login', (user) => {
       console.log('login')
+      fetch('/.netlify/functions/init-roles')
+        .then((response) => response.json())
+        .then((data) => console.log(data))
       netlifyIdentity.close()
       handleUserStateChange(user, 'login')
     })
