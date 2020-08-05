@@ -179,13 +179,16 @@
 
     // TODO - handle init followed by login
     netlifyIdentity.on('init', (user) => {
+      console.log('init')
       handleUserStateChange(user, 'init')
     })
     netlifyIdentity.on('login', (user) => {
+      console.log('login')
       netlifyIdentity.close()
       handleUserStateChange(user, 'login')
     })
     netlifyIdentity.on('logout', (user) => {
+      console.log('logout')
       netlifyIdentity.close()
       handleUserStateChange(user, 'logout')
     })
