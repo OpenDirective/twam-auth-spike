@@ -1,7 +1,7 @@
 // ensure user with no role becomes role = applicant
 exports.handler = async (event) => {
   const promise = new Promise(function (resolve, reject) {
-    console.log('login')
+    console.log('validate')
     const { user } = JSON.parse(event.body)
     const { roles: currentRoles } = user.app_metadata
 
