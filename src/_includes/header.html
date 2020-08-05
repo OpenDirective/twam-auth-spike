@@ -134,13 +134,14 @@
 
     function getRolesText(user) {
       const roles = user.app_metadata.roles
-      return roles && roles.length != 0 ? roles.join(', ') : ''
+      return roles && roles.length != 0 && roles[0] != ''
+        ? roles.join(', ')
+        : '[none];'
     }
 
     function updateUserInfo(user, event) {
       if (user) {
         const { full_name } = user.user_metadata
-        const roles = getRolesText(user)
 
         signupButton.classList.add('hidden')
         loginButton.classList.add('hidden')
@@ -157,10 +158,11 @@
     }
 
     function updateHomePageMsg(user) {
-      const msg = document.querySelector('#home-message')
+      const msg = document.querySelector('#message')
       if (!msg) {
         return
       }
+
       msg.innerHTML = user
         ? `Welcome ${
             user.user_metadata.full_name
@@ -169,7 +171,9 @@
     }
 
     const handleUserStateChange = (user, event) => {
-      updateHomePageMsg(user)
+      if (window.location.pathname == '/') {
+        updateHomePageMsg(user)
+      }
       updateUserInfo(user, event)
     }
 

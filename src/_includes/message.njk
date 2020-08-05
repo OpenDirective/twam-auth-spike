@@ -17,10 +17,17 @@ layout: default.njk
   .centred h1 {
     color: var(--white);
   }
+
+  .message a:link {
+    color: white;
+  }
+  .message a:visited {
+    color: var(--blue);
+  }
 </style>
 
 <div class="centred">
-  <h1 id="home-message">{{ content | safe }}</h1>
+  <h1 id="message">{{ content | safe }}</h1>
 </div>
 
 <script defer></script>
