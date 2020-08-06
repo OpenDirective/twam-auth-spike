@@ -187,6 +187,7 @@
     })
     netlifyIdentity.on('logout', (user) => {
       netlifyIdentity.close()
+      window.location.href = '/'
       handleUserStateChange(user, 'logout')
     })
     function handleEsc(e) {
