@@ -16,5 +16,8 @@
   "homepage": "https://deploy-preview-3--twam-gallant-swirles-d68516.netlify.app/",
   "devDependencies": {
     "@11ty/eleventy": "^0.11.0"
+  },
+  "dependencies": {
+    "google-spreadsheet": "^3.0.11"
   }
 }
