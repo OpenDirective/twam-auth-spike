@@ -147,6 +147,10 @@
       return { '': '/', applicant: '/applicant', rdm: '/rdm' }[role]
     }
 
+    function setImmediate(fn) {
+      setTimeout(fn, 0) // make sure happens on next scheduler loop
+    }
+
     function updateUserInfo(user, event) {
       if (user) {
         const { full_name } = user.user_metadata
@@ -192,12 +196,16 @@
     netlifyIdentity.on('login', (user) => {
       netlifyIdentity.close()
       handleUserStateChange(user, 'login')
-      window.location.href = getRolePage(user)
+      setImmediate(() => {
+        window.location.href = getRolePage(user)
+      })
     })
     netlifyIdentity.on('logout', (user) => {
       netlifyIdentity.close()
-      window.location.href = '/'
       handleUserStateChange(user, 'logout')
+      setImmediate(() => {
+        window.location.href = '/'
+      })
     })
     function handleEsc(e) {
       if (e.key == 'Escape') {
