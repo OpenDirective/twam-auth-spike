@@ -185,7 +185,7 @@
 
       const roleMsg =
         user && getRoles(user)[0] == 'applicant'
-          ? '<br/><br/><h1>You can make an <a href="/application">application</a> for a TWAM toolkit.</h1>'
+          ? '<br/><br/>You can <a href="/applicant">apply for a TWAM toolkit.</a>'
           : ''
 
       msg.innerHTML = user
@@ -193,7 +193,7 @@
             user.user_metadata.full_name
           }.<br/><br/>You have the role(s) "${getRolesText(
             user,
-          )}".</h1>${roleMsg}`
+          )}".${roleMsg}</h1>`
         : '<h1>Please log into your account.<br /><br />Sign Up first if you need an account.</h1>'
     }
 
