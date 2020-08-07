@@ -151,6 +151,14 @@
       setTimeout(fn, 0) // make sure happens on next scheduler loop
     }
 
+    function gotoPage(page) {
+      if (page != window.location.pathname) {
+        setImmediate(() => {
+          window.location.href = page
+        })
+      }
+    }
+
     function updateUserInfo(user, event) {
       if (user) {
         const { full_name } = user.user_metadata
@@ -196,18 +204,12 @@
     netlifyIdentity.on('login', (user) => {
       netlifyIdentity.close()
       handleUserStateChange(user, 'login')
-      debugger
-      setImmediate(() => {
-        debugger
-        window.location.href = getRolePage(user) // TODO check if closure is a memory leak
-      })
+      gotoPage(getRolePage(user))
     })
     netlifyIdentity.on('logout', (user) => {
       netlifyIdentity.close()
       handleUserStateChange(user, 'logout')
-      setImmediate(() => {
-        window.location.href = '/'
-      })
+      gotoPage('/')
     })
     function handleEsc(e) {
       if (e.key == 'Escape') {
