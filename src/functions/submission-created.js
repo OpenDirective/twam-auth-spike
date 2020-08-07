@@ -15,7 +15,7 @@ const { GoogleSpreadsheet } = require('google-spreadsheet')
 
 exports.handler = async (event, context) => {
   const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
-  console.log(process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/gm, '\n'))
+  console.log('aaa\n', process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/gm, '\n'))
   await doc.useServiceAccountAuth({
     client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
     private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
