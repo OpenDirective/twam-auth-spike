@@ -13,7 +13,10 @@ if (!process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
 
 const { GoogleSpreadsheet } = require('google-spreadsheet')
 
+console.log('zzzzz')
+
 exports.handler = async (event, context) => {
+  console.log('fffff')
   const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
 
   await doc.useServiceAccountAuth({
