@@ -1,2 +1,2 @@
-/rdm/*	      200!  Role=rdm
+/rdm/*	      200!  Role=rdm,admin
 /applicant/*  200!  Role=applicant,admin
