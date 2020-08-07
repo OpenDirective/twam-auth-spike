@@ -204,7 +204,7 @@
     netlifyIdentity.on('login', (user) => {
       netlifyIdentity.close()
       handleUserStateChange(user, 'login')
-      gotoPage(getRolePage(user))
+      //gotoPage(getRolePage(user))
     })
     netlifyIdentity.on('logout', (user) => {
       netlifyIdentity.close()
