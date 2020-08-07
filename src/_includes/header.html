@@ -138,7 +138,7 @@
     }
 
     function getRolesText(user) {
-      const roles = getRoles(user)[0]
+      const roles = getRoles(user)
       return roles[0] != '' ? roles.join(', ') : '[none]'
     }
 
