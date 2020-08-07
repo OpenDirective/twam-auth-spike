@@ -132,11 +132,18 @@
     logoutButton.addEventListener('click', () => netlifyIdentity.logout())
     const nameDiv = document.getElementById('name')
 
-    function getRolesText(user) {
+    function getRoles(user) {
       const roles = user.app_metadata.roles
-      return roles && roles.length != 0 && roles[0] != ''
-        ? roles.join(', ')
-        : '[none]'
+      return roles && roles.length != 0 ? roles : ['']
+    }
+
+    function getRolesText(user) {
+      return getRoles(user) && roles[0] != '' ? roles.join(', ') : '[none]'
+    }
+
+    function getRolePage(user) {
+      const [role] = getRoles(user)
+      return { '': '/', app: '/applicant', rdm: '/rdm' }.role
     }
 
     function updateUserInfo(user, event) {
@@ -182,6 +189,7 @@
       handleUserStateChange(user, 'init')
     })
     netlifyIdentity.on('login', (user) => {
+      window.location.href = getRolePage(user)
       netlifyIdentity.close()
       handleUserStateChange(user, 'login')
     })
