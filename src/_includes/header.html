@@ -138,7 +138,8 @@
     }
 
     function getRolesText(user) {
-      return getRoles(user) && roles[0] != '' ? roles.join(', ') : '[none]'
+      const roles = getRoles(user)[0]
+      return roles[0] != '' ? roles.join(', ') : '[none]'
     }
 
     function getRolePage(user) {
