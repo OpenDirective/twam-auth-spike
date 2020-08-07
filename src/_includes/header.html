@@ -196,8 +196,10 @@
     netlifyIdentity.on('login', (user) => {
       netlifyIdentity.close()
       handleUserStateChange(user, 'login')
+      debugger
       setImmediate(() => {
-        window.location.href = getRolePage(user)
+        debugger
+        window.location.href = getRolePage(user) // TODO check if closure is a memory leak
       })
     })
     netlifyIdentity.on('logout', (user) => {
