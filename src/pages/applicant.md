@@ -2,7 +2,8 @@
 
 Please make an application using this form.
 
-<form name="contact" method="POST" data-netlify="true">
+<!-- markdownlint-disable MD033 -->
+<form name="Application" method="POST" data-netlify="true" action="/app-ack">
   <p>
     <label>Your Name:<br/> <input type="text" name="name" /></label>
   </p>
