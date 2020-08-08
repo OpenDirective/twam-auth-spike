@@ -25,3 +25,7 @@ Please make an application using this form.
     <button type="submit">Send</button>
   </p>
 </form>
+
+<form action="/.netlify/functions/read-sheet" method="GET">
+  <p><button type="submit">Get My applications</button></p>
+</form>
