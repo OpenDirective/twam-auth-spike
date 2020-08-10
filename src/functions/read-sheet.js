@@ -4,6 +4,8 @@ if (!process.env.NETLIFY) {
   require('dotenv').config()
 }
 
+const fetch = require('node-fetch')
+
 if (!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL)
   throw new Error('no GOOGLE_SERVICE_ACCOUNT_EMAIL env var set')
 if (!process.env.GOOGLE_PRIVATE_KEY)
@@ -14,6 +16,7 @@ if (!process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
 const { GoogleSpreadsheet } = require('google-spreadsheet')
 
 exports.handler = async (event, context) => {
+  /*
   const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
 
   await doc.useServiceAccountAuth({
@@ -24,13 +27,11 @@ exports.handler = async (event, context) => {
   const sheet = doc.sheetsByIndex[0]
 
   try {
-    const data = JSON.parse(event.body).payload.data
-    const addedRow = await sheet.addRow(data)
+    await sheet.loadCells()
+    .then((c) => console.log('c', c))
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        message: `POST Success - added row ${addedRow._rowNumber - 1}`,
-      }),
+      body: 'hello',
     }
   } catch (err) {
     console.error('error ocurred in processing ', event)
@@ -40,4 +41,22 @@ exports.handler = async (event, context) => {
       body: err.toString(),
     }
   }
+*/
+  const {
+    user: { email },
+  } = context.clientContext
+
+  const fetch = require('node-fetch')
+
+  const API_ENDPOINT =
+    'https://script.google.com/macros/s/AKfycby9IHg3awfiHQF8zuRFRGFUqfAkMSOajMRXbF3PemYKvAPjABg/exec'
+  const url = `${API_ENDPOINT}?email=${encodeURIComponent(email)}`
+  console.log(url)
+  return fetch(url, { headers: { Accept: 'application/json' } })
+    .then((response) => response.text())
+    .then((text) => ({
+      statusCode: 200,
+      body: text,
+    }))
+    .catch((error) => ({ statusCode: 422, body: String(error) }))
 }
