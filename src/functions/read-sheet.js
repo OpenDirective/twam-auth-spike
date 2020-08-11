@@ -1,32 +1,4 @@
-const { GoogleSpreadsheet } = require('google-spreadsheet')
-
 exports.handler = async (event, context) => {
-  /*
-  const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
-
-  await doc.useServiceAccountAuth({
-    client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-  })
-  await doc.loadInfo()
-  const sheet = doc.sheetsByIndex[0]
-
-  try {
-    await sheet.loadCells()
-    .then((c) => console.log('c', c))
-    return {
-      statusCode: 200,
-      body: 'hello',
-    }
-  } catch (err) {
-    console.error('error ocurred in processing ', event)
-    console.error(err)
-    return {
-      statusCode: 500,
-      body: err.toString(),
-    }
-  }
-*/
   const {
     user: { email },
   } = context.clientContext
