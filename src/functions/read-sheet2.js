@@ -45,7 +45,9 @@ exports.handler = async (event, context) => {
     const dataCells = [...sheet._cells.slice(1, sheet._cells.length)]
     console.log('a')
     const rows = dataCells.map((row) =>
-      row.map((c) => c._rawData.formattedValue ?? ''),
+      row.map((c) =>
+        c._rawData.formattedValue ? c._rawData.formattedValue : '',
+      ),
     )
     console.log('a')
 
