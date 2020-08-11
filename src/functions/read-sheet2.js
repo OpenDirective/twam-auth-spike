@@ -1,7 +1,3 @@
-const n = null
-const v = n ?? 123
-console.log(v)
-
 if (!process.env.NETLIFY) {
   // use .enc file for local dev and assume netlify variables in CI
   // TODO can this not be run time?
