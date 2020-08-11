@@ -6,4 +6,4 @@ layout: message.njk
 
 # We will process it and reply to you by email.
 
-[Go Home](/)
+[Continue](/applicant)

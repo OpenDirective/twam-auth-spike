@@ -19,14 +19,16 @@ Please make an application using this form.
     <label>Your Email:<br/> <input type="email" name="email" required /></label>
   </p>
   <p>
-    <label>About yourself / your organisation:<br/> <textarea name="message"   required></textarea></label>
+    <label>About yourself / your organisation:<br/> <textarea name="message" required></textarea></label>
   </p>
   <p>
     <button type="submit">Send</button>
   </p>
 </form>
 
-<form id="getit" action="/.netlify/functions/read-sheet" method="GET">
+<hr>
+
+<form id="getapps" action="/.netlify/functions/read-sheet2" method="GET">
   <p><button type="submit">Get My applications</button></p>
 </form>
 
@@ -47,17 +49,28 @@ async function  callFunctionWithAuth(url) {
   return response.json(); // parses JSON response into native JavaScript objects
 }
 
-function fs(event) {
+function sendForm(event, where) {
   event.preventDefault()
   const funct = event.target.action
   callFunctionWithAuth(funct).then(({rows}) => {
-    const div = document.querySelector('#rows')
+    const div = document.querySelector(where)
     const text= rows.map((row)=>row.toString()).join('\r\n\r\n')
     div.textContent=text
   })
 }
 
-const form = document.querySelector('#getit')
-form.onsubmit = fs
+const form = document.querySelector('#getapps')
+form.onsubmit = (e) => sendForm(e, '#rows')
+
+window.addEventListener('load', onLoad, {once: true})
+function onLoad() {
+  const name = netlifyIdentity.currentUser().user_metadata.full_name
+  const nameElem = document.querySelector('input[type="text"]')
+  nameElem.value = name
+
+  const email = netlifyIdentity.currentUser().email
+  const emailElem = document.querySelector('input[type="email"]')
+  emailElem.value = email
+}
 
 </script>

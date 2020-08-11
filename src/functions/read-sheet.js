@@ -1,18 +1,3 @@
-if (!process.env.NETLIFY) {
-  // use .enc file for local dev and assume netlify variables in CI
-  // TODO can this not be run time?
-  require('dotenv').config()
-}
-
-const fetch = require('node-fetch')
-
-if (!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL)
-  throw new Error('no GOOGLE_SERVICE_ACCOUNT_EMAIL env var set')
-if (!process.env.GOOGLE_PRIVATE_KEY)
-  throw new Error('no GOOGLE_PRIVATE_KEY env var set')
-if (!process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
-  throw new Error('no GOOGLE_SPREADSHEET_ID_FROM_URL env var set')
-
 const { GoogleSpreadsheet } = require('google-spreadsheet')
 
 exports.handler = async (event, context) => {
