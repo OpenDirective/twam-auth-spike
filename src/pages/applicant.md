@@ -18,6 +18,13 @@ Please make an application using this form.
   <p>
     <label>Your Email:<br/> <input type="email" name="email" required /></label>
   </p>
+  <p>The country you are in:</p>
+  <div>
+  <label><input type="radio" id="zambia" name="country" value="zambia" checked required>Zambia</label>
+  </div>
+  <div>
+    <label><input type="radio" id="uganda" name="country" value="uganda" required>Uganda</label>
+  </div>
   <p>
     <label>About yourself / your organisation:<br/> <textarea name="message" required></textarea></label>
   </p>
