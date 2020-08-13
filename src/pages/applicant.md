@@ -11,7 +11,7 @@ Please make an application using this form.
 
 </style>
 
-<form name="Application" method="POST" data-netlify="true" action="/app-ack">
+<form name="Application" method="POST" data-netlify="true" enctype="multipart/form-data" action="/app-ack">
   <p>
     <label>Your Name:<br/> <input type="text" name="name" required /></label>
   </p>
@@ -21,6 +21,8 @@ Please make an application using this form.
   <p>
     <label>About yourself / your organisation:<br/> <textarea name="message" required></textarea></label>
   </p>
+  <p>
+  <label>Choose file to upload:<br/> <input type="file" name="file"></label></p>
   <p>
     <button type="submit">Send</button>
   </p>
