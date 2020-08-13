@@ -31,7 +31,13 @@ exports.handler = async (event, context) => {
   const sheet = await doc.addSheet()
   const sheetId = sheet.sheetId
 
-  const formula = `={{ADDRESS(ROW()+1,COLUMN())&":"&ADDRESS(ROW()+CountA(Filter(INDIRECT("Sheet1!C2:D"&COUNTA(Sheet1!B2:B9999)+1), INDIRECT("Sheet1!B2:B"&COUNTA(Sheet1!B2:B9999)+1)="${email}"))-1,COLUMN()+2-1), "${email}"}; Filter(INDIRECT("Sheet1!C2:D"&COUNTA(Sheet1!B2:B9999)+1), INDIRECT("Sheet1!B2:B"&COUNTA(Sheet1!B2:B9999)+1)="${email}")}`
+  const rowrange = `COUNTA(Sheet1!B2:B9999)+1`
+  const cells = `Filter(INDIRECT("Sheet1!C2:D"&${rowrange}), INDIRECT("Sheet1!B2:B"&${rowrange})="${email}")`
+  const range = `ADDRESS(ROW()+1,COLUMN())&":"&ADDRESS(ROW()+CountA(${cells})-1,COLUMN()+2-1)`
+  const row1 = `{${range}, "${email}"}` // need as many columns as in cells!
+  const row2 = `${cells}`
+  const formula = `={${row1};${row2}}`
+  console.log(formula)
 
   try {
     await sheet.loadCells('A1') // Need?
@@ -47,7 +53,7 @@ exports.handler = async (event, context) => {
       ),
     )
 
-    doc.deleteSheet(sheetId)
+    //   doc.deleteSheet(sheetId)
 
     const result = JSON.stringify({ rows })
     return {
