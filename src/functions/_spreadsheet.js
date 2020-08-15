@@ -40,11 +40,29 @@ exports.getUserApplications = async (email) => {
       ),
     )
 
-    const result = JSON.stringify({ rows })
-
     doc.deleteSheet(sheetId) // no need to await as we're done
 
     return rows
+  } catch (err) {
+    throw err
+  }
+}
+
+exports.getUserData = async (email) => {
+  const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
+
+  await doc.useServiceAccountAuth({
+    client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+  })
+  await doc.loadInfo()
+  sheet = doc.sheetsById()[384916664] // People tab
+
+  const rows = await sheet.getRows()
+  const userData = rows.filter((row) => row.email == email)
+
+  try {
+    return userData
   } catch (err) {
     throw err
   }

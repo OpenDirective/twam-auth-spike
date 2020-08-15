@@ -1,9 +1,12 @@
+const { getUserData } = require('./_spreadsheet')
+
 exports.initRoles = function initRoles(event, context) {
   const promise = new Promise(function (resolve, reject) {
     const { user } = JSON.parse(event.body)
     const { roles: currentRoles, country } = user.app_metadata
 
-    getAppMetadata(user)
+    //    const userData =  getUserData()
+
     console.log(user, event, context)
 
     let body = {}
@@ -17,5 +20,3 @@ exports.initRoles = function initRoles(event, context) {
   })
   return promise
 }
-
-function getAppMetadata(user) {}
