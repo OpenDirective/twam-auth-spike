@@ -20,7 +20,7 @@ Please make an application using this form.
   </p>
   <p>The country you are in:</p>
   <div>
-  <label><input type="radio" id="zambia" name="country" value="zambia" checked required>Zambia</label>
+  <label><input type="radio" id="zambia" name="country" value="zambia" required>Zambia</label>
   </div>
   <div>
     <label><input type="radio" id="uganda" name="country" value="uganda" required>Uganda</label>
