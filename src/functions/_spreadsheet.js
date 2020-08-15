@@ -7,7 +7,7 @@ if (!process.env.GOOGLE_PRIVATE_KEY)
 if (!process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
   throw new Error('no GOOGLE_SPREADSHEET_ID_FROM_URL env var set')
 
-exports.getUserApplications = async (user) => {
+exports.getUserApplications = async (email) => {
   const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
 
   await doc.useServiceAccountAuth({
