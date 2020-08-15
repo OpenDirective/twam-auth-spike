@@ -33,7 +33,8 @@ exports.addApplication = async (data) => {
   try {
     const doc = await initDoc()
     console.log(data)
-    const sheet = doc.sheetsById[GOOGLE_SPREADSHEET_APPLICATIONS_SHEET_ID]
+    const sheet =
+      doc.sheetsById[process.env.GOOGLE_SPREADSHEET_APPLICATIONS_SHEET_ID]
     const addedRow = await sheet.addRow(data)
   } catch (err) {
     throw err
@@ -52,7 +53,7 @@ exports.getUserApplications = async (email) => {
     const doc = await initDoc()
     const sheet = await doc.addSheet()
     const sheetId = sheet.sheetId
-    console.log(sheetId)
+
     await sheet.loadCells('A1') // Need?
     const cell = sheet.getCell(0, 0)
     cell.formula = formula
@@ -66,7 +67,7 @@ exports.getUserApplications = async (email) => {
       ),
     )
 
-    await doc.deleteSheet(sheetId) // no need to await as we're done
+    await doc.deleteSheet(sheetId)
 
     return rows
   } catch (err) {
