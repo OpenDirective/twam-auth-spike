@@ -3,8 +3,6 @@ const { addApplication } = require('./_spreadsheet')
 exports.handler = async (event, context) => {
   try {
     const data = JSON.parse(event.body).payload.data
-    console.log(data)
-
     const newRowNumber = await addApplication(data)
     return {
       statusCode: 200,

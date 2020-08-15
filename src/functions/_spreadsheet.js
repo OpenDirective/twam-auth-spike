@@ -36,8 +36,6 @@ exports.addApplication = async (data) => {
     const sheet =
       doc.sheetsById[process.env.GOOGLE_SPREADSHEET_APPLICATIONS_SHEET_ID]
     const row = { ...data, file: data.file.url }
-    console.log(row)
-
     const addedRow = await sheet.addRow(row)
     return addedRow._rowNumber - 1
   } catch (err) {
@@ -71,7 +69,7 @@ exports.getUserApplications = async (email) => {
       ),
     )
 
-    await doc.deleteSheet(sheetId)
+    //    await doc.deleteSheet(sheetId)
 
     return rows
   } catch (err) {
