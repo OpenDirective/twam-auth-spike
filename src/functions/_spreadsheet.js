@@ -50,7 +50,7 @@ exports.getUserApplications = async (email) => {
 
 function objectFromRow(header, row) {
   return header.reduce(function (result, item, index) {
-    result[item] = row[index]
+    result[item] = row[item]
     return result
   }, {})
 }
@@ -68,7 +68,7 @@ exports.getUserData = async (email) => {
   const rows = await sheet.getRows()
   const userDataRow = rows.filter((row) => row.email == email)[0]
   userData = userDataRow ? objectFromRow(sheet.headerValues, userDataRow) : {}
-  console.log(userDataRow, userData)
+  console.log(userDataRow.email, userData)
 
   try {
     return userData
