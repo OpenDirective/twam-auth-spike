@@ -56,6 +56,7 @@ exports.getUserData = async (email) => {
     private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
   })
   await doc.loadInfo()
+  console.log(doc.sheetsById)
   sheet = doc.sheetsById[384916664] // People tab
 
   const rows = await sheet.getRows()

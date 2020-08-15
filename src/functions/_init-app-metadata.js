@@ -7,13 +7,14 @@ exports.initAppMetadata = async function initRoles(event, context) {
 
   //TODO only call for twam.uk mail
   const userData = await getUserData(user.email)
-  console.log(user.email, userData)
   if (userData) {
+    console.log('userData', user.email, userData)
     const { roles, country } = userData
     body = {
       body: JSON.stringify({ app_metadata: { roles, country } }),
     }
   } else {
+    console.log('no userdata')
     if (!currentRoles || currentRoles.length == 0) {
       body = {
         body: JSON.stringify({ app_metadata: { roles: ['applicant'] } }),
