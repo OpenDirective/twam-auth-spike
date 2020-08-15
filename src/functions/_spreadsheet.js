@@ -1,14 +1,24 @@
+if (!process.env.NETLIFY) {
+  // use .enc file for local dev and assume netlify variables in CI
+  // TODO can this not be run time?
+  require('dotenv').config()
+}
+
 const { GoogleSpreadsheet } = require('google-spreadsheet')
 
 if (!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL)
   throw new Error('no GOOGLE_SERVICE_ACCOUNT_EMAIL env var set')
 if (!process.env.GOOGLE_PRIVATE_KEY)
   throw new Error('no GOOGLE_PRIVATE_KEY env var set')
-if (!process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
-  throw new Error('no GOOGLE_SPREADSHEET_ID_FROM_URL env var set')
+if (!process.env.GOOGLE_SPREADSHEET_ID)
+  throw new Error('no GOOGLE_SPREADSHEET_ID env var set')
+if (!process.env.GOOGLE_SPREADSHEET_APPLICATIONS_SHEET_ID)
+  throw new Error('no GOOGLE_SPREADSHEET_APPLICATIONS_SHEET_ID env var set')
+if (!process.env.GOOGLE_SPREADSHEET_PEOPLE_SHEET_ID)
+  throw new Error('no GOOGLE_SPREADSHEET_PEOPLE_SHEET_ID env var set')
 
 exports.addApplication = async (data) {
-  const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
+  const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID)
 
   await doc.useServiceAccountAuth({
     client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
@@ -17,7 +27,7 @@ exports.addApplication = async (data) {
   await doc.loadInfo()
 
   try {
-    const sheet = doc.sheetsByIndex[0]
+    const sheet = doc.sheetsById[GOOGLE_SPREADSHEET_APPLICATIONS_SHEET_ID]
     const addedRow = await sheet.addRow(data)
   } catch (err) {
     throw err
@@ -25,7 +35,7 @@ exports.addApplication = async (data) {
 }
 
 exports.getUserApplications = async (email) => {
-  const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
+  const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID)
 
   await doc.useServiceAccountAuth({
     client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
@@ -81,14 +91,14 @@ function userObjectfromRow(header, row) {
 }
 
 exports.getUserData = async (email) => {
-  const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
+  const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID)
 
   await doc.useServiceAccountAuth({
     client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
     private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
   })
   await doc.loadInfo()
-  sheet = doc.sheetsById['384916664'] // People tab
+  sheet = doc.sheetsById[GOOGLE_SPREADSHEET_PEOPLE_SHEET_ID] // People tab
 
   const rows = await sheet.getRows()
   const userDataRow = rows.filter((row) => row.email == email)[0]
