@@ -7,6 +7,23 @@ if (!process.env.GOOGLE_PRIVATE_KEY)
 if (!process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
   throw new Error('no GOOGLE_SPREADSHEET_ID_FROM_URL env var set')
 
+exports.addApplication = async (data) {
+  const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
+
+  await doc.useServiceAccountAuth({
+    client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+  })
+  await doc.loadInfo()
+
+  try {
+    const sheet = doc.sheetsByIndex[0]
+    const addedRow = await sheet.addRow(data)
+  } catch (err) {
+    throw err
+  }
+}
+
 exports.getUserApplications = async (email) => {
   const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
 
