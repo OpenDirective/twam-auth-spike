@@ -1,4 +1,5 @@
-// ensure user with no role becomes role = applicant
+const { initAppMetadata } = require('./_init-app-metadata')
+
 exports.handler = async (event, context) => {
-  return require('./_init-roles').initRoles(event, context)
+  return await initAppMetadata(event, context)
 }
