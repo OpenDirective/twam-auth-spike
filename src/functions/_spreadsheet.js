@@ -59,7 +59,8 @@ exports.getUserData = async (email) => {
   sheet = doc.sheetsById['384916664'] // People tab
 
   const rows = await sheet.getRows()
-  const userData = rows.filter((row) => row.email == email)
+  const userDataRow = rows.filter((row) => row.email == email)[0]
+  userData = userDataRow ? { ...userDataRow } : {}
 
   try {
     return userData
