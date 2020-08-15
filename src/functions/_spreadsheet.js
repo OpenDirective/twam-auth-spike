@@ -58,7 +58,9 @@ function objectFromRow(header, row) {
 function userObjectfromRow(header, row) {
   const obj = objectFromRow(header, row)
   if (obj.roles) {
-    obj.roles = obj.roles.map((r) => r.trim().toLowerCase())
+    obj.roles = obj.roles
+      .split(',')
+      .obj.roles.map((r) => r.trim().toLowerCase())
   }
   return obj
 }
