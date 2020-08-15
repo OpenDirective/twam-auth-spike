@@ -17,7 +17,7 @@ if (!process.env.GOOGLE_SPREADSHEET_APPLICATIONS_SHEET_ID)
 if (!process.env.GOOGLE_SPREADSHEET_PEOPLE_SHEET_ID)
   throw new Error('no GOOGLE_SPREADSHEET_PEOPLE_SHEET_ID env var set')
 
-exports.addApplication = async (data) => {
+async function initDoc() {
   const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID)
 
   await doc.useServiceAccountAuth({
@@ -26,7 +26,13 @@ exports.addApplication = async (data) => {
   })
   await doc.loadInfo()
 
+  return doc
+}
+
+exports.addApplication = async (data) => {
   try {
+    const doc = await initDoc()
+
     const sheet = doc.sheetsById[GOOGLE_SPREADSHEET_APPLICATIONS_SHEET_ID]
     const addedRow = await sheet.addRow(data)
   } catch (err) {
@@ -35,17 +41,6 @@ exports.addApplication = async (data) => {
 }
 
 exports.getUserApplications = async (email) => {
-  const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID)
-
-  await doc.useServiceAccountAuth({
-    client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-  })
-  await doc.loadInfo()
-
-  const sheet = await doc.addSheet()
-  const sheetId = sheet.sheetId
-
   const rows = `COUNTA(Applications!B2:B9999)+1`
   const cells = `Filter(INDIRECT("Applications!C2:D"&${rows}), INDIRECT("Applications!B2:B"&${rows})="${email}")`
   const range = `ADDRESS(ROW()+1,COLUMN())&":"&ADDRESS(ROW()+CountA(${cells})-1,COLUMN()+2-1)`
@@ -54,6 +49,10 @@ exports.getUserApplications = async (email) => {
   const formula = `={${row1};${row2}}`
 
   try {
+    const doc = await initDoc()
+    const sheet = await doc.addSheet()
+    const sheetId = sheet.sheetId
+
     await sheet.loadCells('A1') // Need?
     const cell = sheet.getCell(0, 0)
     cell.formula = formula
@@ -91,22 +90,16 @@ function userObjectfromRow(header, row) {
 }
 
 exports.getUserData = async (email) => {
-  const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID)
-
-  await doc.useServiceAccountAuth({
-    client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-  })
-  await doc.loadInfo()
-  sheet = doc.sheetsById[process.env.GOOGLE_SPREADSHEET_PEOPLE_SHEET_ID] // People tab
-
-  const rows = await sheet.getRows()
-  const userDataRow = rows.filter((row) => row.email == email)[0]
-  userData = userDataRow
-    ? userObjectfromRow(sheet.headerValues, userDataRow)
-    : {}
-
   try {
+    const doc = await initDoc()
+    const sheet = doc.sheetsById[process.env.GOOGLE_SPREADSHEET_PEOPLE_SHEET_ID] // People tab
+
+    const rows = await sheet.getRows()
+    const userDataRow = rows.filter((row) => row.email == email)[0]
+    const userData = userDataRow
+      ? userObjectfromRow(sheet.headerValues, userDataRow)
+      : {}
+
     return userData
   } catch (err) {
     throw err
