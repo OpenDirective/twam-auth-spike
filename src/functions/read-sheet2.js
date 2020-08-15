@@ -5,6 +5,7 @@ if (!process.env.NETLIFY) {
 }
 
 const fetch = require('node-fetch')
+const { GoogleSpreadsheet } = require('google-spreadsheet')
 
 if (!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL)
   throw new Error('no GOOGLE_SERVICE_ACCOUNT_EMAIL env var set')
@@ -12,8 +13,6 @@ if (!process.env.GOOGLE_PRIVATE_KEY)
   throw new Error('no GOOGLE_PRIVATE_KEY env var set')
 if (!process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
   throw new Error('no GOOGLE_SPREADSHEET_ID_FROM_URL env var set')
-
-const { GoogleSpreadsheet } = require('google-spreadsheet')
 
 exports.handler = async (event, context) => {
   const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
@@ -31,8 +30,8 @@ exports.handler = async (event, context) => {
   const sheet = await doc.addSheet()
   const sheetId = sheet.sheetId
 
-  const rows = `COUNTA(Sheet1!B2:B9999)+1`
-  const cells = `Filter(INDIRECT("Sheet1!C2:D"&${rows}), INDIRECT("Sheet1!B2:B"&${rows})="${email}")`
+  const rows = `COUNTA(Applications!B2:B9999)+1`
+  const cells = `Filter(INDIRECT("Applications!C2:D"&${rows}), INDIRECT("Applications!B2:B"&${rows})="${email}")`
   const range = `ADDRESS(ROW()+1,COLUMN())&":"&ADDRESS(ROW()+CountA(${cells})-1,COLUMN()+2-1)`
   const row1 = `{${range}, "${email}"}` // need as many columns as in cells!
   const row2 = `${cells}`
@@ -52,9 +51,10 @@ exports.handler = async (event, context) => {
       ),
     )
 
-    doc.deleteSheet(sheetId)
-
     const result = JSON.stringify({ rows })
+
+    doc.deleteSheet(sheetId) // no need to await as we're done
+
     return {
       statusCode: 200,
       body: result,
