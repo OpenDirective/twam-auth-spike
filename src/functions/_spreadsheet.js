@@ -17,7 +17,7 @@ if (!process.env.GOOGLE_SPREADSHEET_APPLICATIONS_SHEET_ID)
 if (!process.env.GOOGLE_SPREADSHEET_PEOPLE_SHEET_ID)
   throw new Error('no GOOGLE_SPREADSHEET_PEOPLE_SHEET_ID env var set')
 
-exports.addApplication = async (data) {
+exports.addApplication = async (data) => {
   const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID)
 
   await doc.useServiceAccountAuth({
