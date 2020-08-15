@@ -5,9 +5,8 @@ exports.initRoles = function initRoles(event, context) {
     const { user } = JSON.parse(event.body)
     const { roles: currentRoles, country } = user.app_metadata
 
-    //    const userData =  getUserData()
-
-    console.log(user, event, context)
+    const userData = getUserData(user.email)
+    console.log(user.email, userData)
 
     let body = {}
     if (!currentRoles || currentRoles.length == 0) {
