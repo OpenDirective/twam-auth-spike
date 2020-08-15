@@ -17,6 +17,7 @@ if (!process.env.GOOGLE_SPREADSHEET_APPLICATIONS_SHEET_ID)
 if (!process.env.GOOGLE_SPREADSHEET_PEOPLE_SHEET_ID)
   throw new Error('no GOOGLE_SPREADSHEET_PEOPLE_SHEET_ID env var set')
 
+// TODO switch to decorator pattern
 async function initDoc() {
   const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID)
 
@@ -32,10 +33,10 @@ async function initDoc() {
 exports.addApplication = async (data) => {
   try {
     const doc = await initDoc()
-    console.log(data)
     const sheet =
       doc.sheetsById[process.env.GOOGLE_SPREADSHEET_APPLICATIONS_SHEET_ID]
     const addedRow = await sheet.addRow(data)
+    return addedRow._rowNumber - 1
   } catch (err) {
     throw err
   }
