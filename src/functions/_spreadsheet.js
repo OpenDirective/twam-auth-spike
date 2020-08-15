@@ -49,10 +49,15 @@ exports.getUserApplications = async (email) => {
 }
 
 function objectFromRow(header, row) {
-  return header.reduce(function (result, item, index) {
+  const obj = header.reduce(function (result, item, index) {
     result[item] = row[item]
     return result
   }, {})
+
+  if (obj.roles) {
+    obj.roles = obj.roles.map((r) => r.trim().toLowerCase())
+  }
+  return obj
 }
 
 exports.getUserData = async (email) => {
