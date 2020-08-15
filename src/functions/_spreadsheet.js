@@ -98,7 +98,7 @@ exports.getUserData = async (email) => {
     private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
   })
   await doc.loadInfo()
-  sheet = doc.sheetsById[GOOGLE_SPREADSHEET_PEOPLE_SHEET_ID] // People tab
+  sheet = doc.sheetsById[process.env.GOOGLE_SPREADSHEET_PEOPLE_SHEET_ID] // People tab
 
   const rows = await sheet.getRows()
   const userDataRow = rows.filter((row) => row.email == email)[0]
