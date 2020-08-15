@@ -68,7 +68,7 @@ exports.getUserData = async (email) => {
   const rows = await sheet.getRows()
   const userDataRow = rows.filter((row) => row.email == email)[0]
   userData = userDataRow ? objectFromRow(sheet.headerValues, userDataRow) : {}
-  console.log(userData)
+  console.log(userDataRow, userData)
 
   try {
     return userData
