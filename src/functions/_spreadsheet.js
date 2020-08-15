@@ -36,6 +36,8 @@ exports.addApplication = async (data) => {
     const sheet =
       doc.sheetsById[process.env.GOOGLE_SPREADSHEET_APPLICATIONS_SHEET_ID]
     const row = { file: data.file.url, ...data }
+    console.log(row)
+
     const addedRow = await sheet.addRow(row)
     return addedRow._rowNumber - 1
   } catch (err) {
