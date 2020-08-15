@@ -4,6 +4,7 @@ exports.initRoles = function initRoles(event, context) {
     const { roles: currentRoles, country } = user.app_metadata
 
     getAppMetadata(user)
+    console.log(user, event, context)
 
     let body = {}
     if (!currentRoles || currentRoles.length == 0) {
@@ -17,6 +18,4 @@ exports.initRoles = function initRoles(event, context) {
   return promise
 }
 
-function getAppMetadata(user) {
-  console.log(user, event, context)
-}
+function getAppMetadata(user) {}
