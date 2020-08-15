@@ -1,7 +1,9 @@
 exports.initRoles = function initRoles(event, context) {
   const promise = new Promise(function (resolve, reject) {
     const { user } = JSON.parse(event.body)
-    const { roles: currentRoles } = user.app_metadata
+    const { roles: currentRoles, country } = user.app_metadata
+
+    getAppMetadata(user)
 
     let body = {}
     if (!currentRoles || currentRoles.length == 0) {
@@ -13,4 +15,8 @@ exports.initRoles = function initRoles(event, context) {
     resolve({ statusCode: 200, ...body })
   })
   return promise
+}
+
+function getAppMetadata(user) {
+  console.log(user, event, context)
 }
