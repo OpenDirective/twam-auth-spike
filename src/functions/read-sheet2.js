@@ -6,8 +6,8 @@ exports.handler = async (event, context) => {
   } = context.clientContext
 
   try {
-    const apps = await getUserApplications(email)
-    const result = JSON.stringify({ apps })
+    const rows = await getUserApplications(email)
+    const result = JSON.stringify({ rows })
     return {
       statusCode: 200,
       body: result,
