@@ -48,6 +48,13 @@ exports.getUserApplications = async (email) => {
   }
 }
 
+function objectFromRow(header, row) {
+  return header.reduce(function (result, item, index) {
+    result[item] = row[index]
+    return result
+  }, {})
+}
+
 exports.getUserData = async (email) => {
   const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID_FROM_URL)
 
@@ -59,9 +66,9 @@ exports.getUserData = async (email) => {
   sheet = doc.sheetsById['384916664'] // People tab
 
   const rows = await sheet.getRows()
-  console.log(sheet.headerValues)
   const userDataRow = rows.filter((row) => row.email == email)[0]
-  userData = userDataRow ? { ...userDataRow } : {}
+  userData = userDataRow ? objectFromRow(sheet.headerValues, userDataRow) : {}
+  console.log(userData)
 
   try {
     return userData
