@@ -49,11 +49,14 @@ exports.getUserApplications = async (email) => {
 }
 
 function objectFromRow(header, row) {
-  const obj = header.reduce(function (result, item, index) {
-    result[item] = row[item]
+  return header.reduce(function (result, item, index) {
+    result[item] = row[item].trim().toLowerCase()
     return result
   }, {})
+}
 
+function userObjectfromRow(header, row) {
+  const obj = objectFromRow(header, row)
   if (obj.roles) {
     obj.roles = obj.roles.map((r) => r.trim().toLowerCase())
   }
@@ -72,7 +75,9 @@ exports.getUserData = async (email) => {
 
   const rows = await sheet.getRows()
   const userDataRow = rows.filter((row) => row.email == email)[0]
-  userData = userDataRow ? objectFromRow(sheet.headerValues, userDataRow) : {}
+  userData = userDataRow
+    ? userObjectfromRow(sheet.headerValues, userDataRow)
+    : {}
 
   try {
     return userData
