@@ -16,7 +16,7 @@ Please make an application using this form.
     <label>Your Name:<br/> <input type="text" name="name" readonly /></label>
   </p>
   <p>
-    <label>Your Email:<br/> <input type="email" name="email" readonly /></label>
+    <label>Your Email:<br/> <input type="email" name="email" required /></label>
   </p>
   <p>The country you are in:</p>
   <div>

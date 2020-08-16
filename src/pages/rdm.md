@@ -1,10 +1,10 @@
 # Hello RDM
 
-Your country is: <span id=country></span>.
+Your country is: <span class="country"></span>.
 
 <!-- markdownlint-disable MD033 -->
 <form id="getapps" action="/.netlify/functions/read-sheet2" method="GET">
-  <p><button type="submit">Get My Country applications</button></p>
+  <p><button type="submit">Get <span class="country"></span> applications</button></p>
 </form>
 
 <pre id="rows"></pre>
@@ -39,8 +39,8 @@ form.onsubmit = (e) => sendForm(e, '#rows')
 window.addEventListener('load', onLoad, {once: true})
 function onLoad() {
   const country = netlifyIdentity.currentUser().app_metadata.country
-  const countryElem = document.querySelector('#country')
-  countryElem.value = country
+  const countryElems = document.querySelectorAll('.country')
+  countryElems.forEach(e => {e.textContent = country})
 }
 
 </script>
