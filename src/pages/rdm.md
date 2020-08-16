@@ -3,7 +3,7 @@
 Your country is: <span class="country"></span>.
 
 <!-- markdownlint-disable MD033 -->
-<form id="getapps" action="/.netlify/functions/read-sheet2" method="GET">
+<form id="getapps" action="/.netlify/functions/read-sheet2?type=country" method="GET">
   <p><button type="submit">Get <span class="country"></span> applications</button></p>
 </form>
 

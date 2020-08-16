@@ -7,7 +7,11 @@ exports.handler = async (event, context) => {
       app_metadata: { country },
     },
   } = context.clientContext
-  console.log(email, country)
+  const {
+    queryStringParameters: { type },
+  } = event
+
+  console.log(type)
 
   try {
     const rows = await getUserApplications(email)
