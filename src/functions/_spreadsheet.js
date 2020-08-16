@@ -43,34 +43,84 @@ exports.addApplication = async (data) => {
   }
 }
 
-exports.getUserApplications = async (email) => {
-  const rows = `COUNTA(Applications!B2:B9999)+1`
-  const cells = `Filter(INDIRECT("Applications!C2:D"&${rows}), INDIRECT("Applications!B2:B"&${rows})="${email}")`
-  const range = `ADDRESS(ROW()+1,COLUMN())&":"&ADDRESS(ROW()+CountA(${cells})-1,COLUMN()+2-1)`
-  const row1 = `{${range}, "${email}"}` // need as many columns as in cells!
-  const row2 = `${cells}`
+const sheet = 'Applications'
+const allRows = `COUNTA(${sheet}!B2:B9999)`
+const range = (fromColumn, toColumn) =>
+  `INDIRECT("${sheet}!${fromColumn}2:${toColumn}"&${allRows}+1)`
+const filter = (fromColumn, toColumn, exprColumn, expression) =>
+  `FILTER(${range(fromColumn, toColumn)}, ${range(
+    exprColumn,
+    exprColumn,
+  )} ${expression})`
+const filterResults = (fromColumn, toColumn, exprColumn, expr) => ({
+  cells: `${filter(fromColumn, toColumn, exprColumn, expr)}`,
+  rows: `COUNTA(${filter(exprColumn, exprColumn, exprColumn, expr)})`,
+  columns: `COLUMNS(${fromColumn}1:${toColumn}1)`,
+})
+
+function getApplicationsFilterFormula(keyColumn, key) {
+  const cells = filterResults('C', 'E', keyColumn, '="' + key + '"')
+  const cellsRange = `ADDRESS(ROW()+1,COLUMN())&":"&ADDRESS(ROW()+${cells.rows},COLUMN()+${cells.columns}-1)`
+  const row1 = `{${cellsRange}, "${key}", SPLIT(REPT(", ", ${cells.columns}-2),",")}` // need as many columns as in cells!
+  const row2 = `${cells.cells}`
   const formula = `={${row1};${row2}}`
+  return formula
+}
 
+exports.handler = async (event, context) => {
   try {
-    const doc = await initDoc()
-    const sheet = await doc.addSheet()
-    const sheetId = sheet.sheetId
+    const email = 'stevel+app@twam.uk'
 
-    await sheet.loadCells('A1') // Need?
-    const cell = sheet.getCell(0, 0)
-    cell.formula = formula
-    await sheet.saveCells([cell])
-    const range = cell.value
-    await sheet.loadCells(range)
-    const dataCells = [...sheet._cells.slice(1, sheet._cells.length)]
-    const rows = dataCells.map((row) =>
-      row.map((c) =>
-        c._rawData.formattedValue ? c._rawData.formattedValue : '',
-      ),
-    )
+    return {
+      statusCode: 200,
+      body: `${getApplicationsFilterFormula('B', email)}`,
+    }
+  } catch (err) {
+    console.error('error ocurred in processing ', event)
+    console.error(err)
+    return {
+      statusCode: 500,
+      body: err.toString(),
+    }
+  }
+}
 
-    //    await doc.deleteSheet(sheetId)
+async function getFilteredApplications(keyColumn, key) {
+  const formula = `${getApplicationsFilterFormula('B', email)}`
 
+  const doc = await initDoc()
+  const sheet = await doc.addSheet()
+  const sheetId = sheet.sheetId
+
+  await sheet.loadCells('A1') // Need?
+  const cell = sheet.getCell(0, 0)
+  cell.formula = formula
+  await sheet.saveCells([cell])
+  const range = cell.value
+  await sheet.loadCells(range)
+  const dataCells = [...sheet._cells.slice(1, sheet._cells.length)]
+  const rows = dataCells.map((row) =>
+    row.map((c) =>
+      c._rawData.formattedValue ? c._rawData.formattedValue : '',
+    ),
+  )
+  await doc.deleteSheet(sheetId)
+
+  return rows
+}
+
+exports.getUserApplications = async (email) => {
+  try {
+    const rows = await getFilteredApplications('B', email)
+    return rows
+  } catch (err) {
+    throw err
+  }
+}
+
+exports.getCountryApplications = async (country) => {
+  try {
+    const rows = await getFilteredApplications('C', country)
     return rows
   } catch (err) {
     throw err

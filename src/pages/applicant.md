@@ -13,10 +13,10 @@ Please make an application using this form.
 
 <form name="Application" method="POST" data-netlify="true" enctype="multipart/form-data" action="/app-ack">
   <p>
-    <label>Your Name:<br/> <input type="text" name="name" required /></label>
+    <label>Your Name:<br/> <input type="text" name="name" readonly /></label>
   </p>
   <p>
-    <label>Your Email:<br/> <input type="email" name="email" required /></label>
+    <label>Your Email:<br/> <input type="email" name="email" readonly /></label>
   </p>
   <p>The country you are in:</p>
   <div>
