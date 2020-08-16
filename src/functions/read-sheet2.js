@@ -1,6 +1,7 @@
 const { getUserApplications } = require('./_spreadsheet')
 
 exports.handler = async (event, context) => {
+  console.log(event, context)
   const {
     user: { email },
   } = context.clientContext

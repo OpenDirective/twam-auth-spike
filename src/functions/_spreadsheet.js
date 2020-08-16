@@ -59,7 +59,7 @@ const filterResults = (fromColumn, toColumn, exprColumn, expr) => ({
 })
 
 function getApplicationsFilterFormula(keyColumn, key) {
-  const cells = filterResults('C', 'E', keyColumn, '="' + key + '"')
+  const cells = filterResults('A', 'E', keyColumn, '="' + key + '"')
   const cellsRange = `ADDRESS(ROW()+1,COLUMN())&":"&ADDRESS(ROW()+${cells.rows},COLUMN()+${cells.columns}-1)`
   const row1 = `{${cellsRange}, "${key}", SPLIT(REPT(", ", ${cells.columns}-2),",")}` // need as many columns as in cells!
   const row2 = `${cells.cells}`
