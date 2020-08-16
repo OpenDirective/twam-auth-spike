@@ -1,13 +1,17 @@
 const { getUserApplications } = require('./_spreadsheet')
 
 exports.handler = async (event, context) => {
-  console.log(event, context)
   const {
     user: { email },
+    user: {
+      app_metadata: { country },
+    },
   } = context.clientContext
+  console.log(email, country)
 
   try {
     const rows = await getUserApplications(email)
+    console.log(rows)
     const result = JSON.stringify({ rows })
     return {
       statusCode: 200,
