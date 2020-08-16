@@ -67,26 +67,8 @@ function getApplicationsFilterFormula(keyColumn, key) {
   return formula
 }
 
-exports.handler = async (event, context) => {
-  try {
-    const email = 'stevel+app@twam.uk'
-
-    return {
-      statusCode: 200,
-      body: `${getApplicationsFilterFormula('B', email)}`,
-    }
-  } catch (err) {
-    console.error('error ocurred in processing ', event)
-    console.error(err)
-    return {
-      statusCode: 500,
-      body: err.toString(),
-    }
-  }
-}
-
 async function getFilteredApplications(keyColumn, key) {
-  const formula = `${getApplicationsFilterFormula('B', email)}`
+  const formula = `${getApplicationsFilterFormula('B', key)}`
 
   const doc = await initDoc()
   const sheet = await doc.addSheet()
@@ -134,7 +116,7 @@ function objectFromRow(header, row) {
   }, {})
 }
 
-function userObjectfromRow(header, row) {
+function userObjectFromRow(header, row) {
   const obj = objectFromRow(header, row)
   if (obj.roles) {
     obj.roles = obj.roles.split(',').map((r) => r.trim().toLowerCase())
@@ -150,7 +132,7 @@ exports.getUserData = async (email) => {
     const rows = await sheet.getRows()
     const userDataRow = rows.filter((row) => row.email == email)[0]
     const userData = userDataRow
-      ? userObjectfromRow(sheet.headerValues, userDataRow)
+      ? userObjectFromRow(sheet.headerValues, userDataRow)
       : {}
 
     return userData
