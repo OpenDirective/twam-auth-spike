@@ -1,4 +1,7 @@
-const { getUserApplications, getCountyApplications } = require('./_spreadsheet')
+const {
+  getUserApplications,
+  getCountryApplications,
+} = require('./_spreadsheet')
 
 exports.handler = async (event, context) => {
   const {
@@ -11,17 +14,14 @@ exports.handler = async (event, context) => {
     queryStringParameters: { type },
   } = event
 
-  console.log(event, context)
-
   try {
     const rows = await (type == 'country'
-      ? getCountyApplications(country)
+      ? getCountryApplications(country)
       : type == 'user'
       ? getUserApplications(email)
       : new Promise((resolve) => {
           resolve([])
         }))
-    console.log(rows)
     const result = JSON.stringify({ rows })
     return {
       statusCode: 200,
