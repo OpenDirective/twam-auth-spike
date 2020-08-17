@@ -37,7 +37,7 @@ Please make an application using this form.
 
 <hr>
 
-<form id="getapps" action="/.netlify/functions/read-sheet2" method="GET">
+<form id="getapps" action="/.netlify/functions/read-sheet2?type=user" method="GET">
   <p><button type="submit">Get My applications</button></p>
 </form>
 
