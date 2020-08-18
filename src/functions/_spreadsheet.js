@@ -35,7 +35,10 @@ exports.addApplication = async (data) => {
     const doc = await initDoc()
     const sheet =
       doc.sheetsById[process.env.GOOGLE_SPREADSHEET_APPLICATIONS_SHEET_ID]
-    const row = { ...data, file: data.file.url }
+    const row = {
+      ...data,
+      file: `=HYPERLINK("${data.file.url}","${data.file.filename}")`,
+    }
     const addedRow = await sheet.addRow(row)
     return addedRow._rowNumber - 1
   } catch (err) {
@@ -98,11 +101,16 @@ exports.getFilteredApplications = async function (
   const range = cell.value
   await sheet.loadCells(range)
   const cell2 = sheet.getCell(0, 1)
-  const dataCells = [...sheet._cells.slice(1, sheet._cells.length)]
+  const dataCells = [...sheet._cells.slice(1, sheet._cells.length)] // skip range
   const rows = dataCells.map((row) => {
-    return row.map((c) =>
-      c._rawData.formattedValue ? c._rawData.formattedValue : '',
-    )
+    return row.map((c) => {
+      const raw = c._rawData
+      return raw.hyperlink
+        ? `${raw.hyperlink},${raw.formattedValue}`
+        : raw.formattedValue
+        ? raw.formattedValue
+        : ''
+    })
   })
   await doc.deleteSheet(sheetId)
 

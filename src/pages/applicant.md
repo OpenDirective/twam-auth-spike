@@ -66,8 +66,13 @@ async function  callFunctionWithAuth(url) {
   return response.json(); // parses JSON response into native JavaScript objects
 }
 
+function hyperlink(cell) {
+  const tuple = cell.split(',')
+  return `<a href="${tuple[0]}">${tuple[1]}</a>`
+  }
+
 function renderRow(row, isHeader) {
-  const cells = row.map((c,i) => isHeader ? `<th>${c}</th>` : `<td>${i==2 && c ? '<a href="'+c+'">file</a>' : c }</td>`);
+  const cells = row.map((c,i) => isHeader ? `<th>${c}</th>` : `<td>${i==2 && c ? hyperlink(c) : c}</td>`);
   return `<tr>${cells.join('')}</tr>`;
 }
 

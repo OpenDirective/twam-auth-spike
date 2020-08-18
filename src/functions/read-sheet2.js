@@ -2,7 +2,7 @@ const { getFilteredApplications } = require('./_spreadsheet')
 
 async function getUserApplications(email) {
   try {
-    const rows = await getFilteredApplications('B', 'F', 'B', email) // Need B  as is removed
+    const rows = await getFilteredApplications('B', 'F', 'B', email) // Need B as is removed
     return rows
   } catch (err) {
     throw err
