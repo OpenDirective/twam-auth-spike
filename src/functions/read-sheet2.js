@@ -1,7 +1,22 @@
-const {
-  getUserApplications,
-  getCountryApplications,
-} = require('./_spreadsheet')
+const { getFilteredApplications } = require('./_spreadsheet')
+
+async function getUserApplications(email) {
+  try {
+    const rows = await getFilteredApplications('B', 'F', 'B', email) // Need B  as is removed
+    return rows
+  } catch (err) {
+    throw err
+  }
+}
+
+async function getCountryApplications(country) {
+  try {
+    const rows = await getFilteredApplications('A', 'G', 'C', country)
+    return rows
+  } catch (err) {
+    throw err
+  }
+}
 
 exports.handler = async (event, context) => {
   const {
@@ -22,6 +37,7 @@ exports.handler = async (event, context) => {
       : new Promise((resolve) => {
           resolve([])
         }))
+
     const result = JSON.stringify({ rows })
     return {
       statusCode: 200,

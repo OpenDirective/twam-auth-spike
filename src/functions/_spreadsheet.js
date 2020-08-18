@@ -65,17 +65,27 @@ const filterResults = (fromColumn, toColumn, exprColumn, expr) => ({
   ncolumns: `COLUMNS(${fromColumn}1:${toColumn}1)`,
 })
 
-function getApplicationsFilterFormula(keyColumn, key) {
-  const cells = filterResults('A', 'E', keyColumn, '="' + key + '"')
+function getApplicationsFilterFormula(fromColumn, toColumn, keyColumn, key) {
+  const cells = filterResults(fromColumn, toColumn, keyColumn, '="' + key + '"')
   const cellsRange = `ADDRESS(ROW()+1,COLUMN())&":"&ADDRESS(ROW()+${cells.nrows}+1,COLUMN()+${cells.ncolumns}-2)`
   const row1 = `{${cellsRange}, "${key}", SPLIT(REPT(", ", ${cells.ncolumns}-3),",")}` // need as many columns as in cells!
-  const row2 = `FILTER({${cells.headers};${cells.cells}}, CHAR(COLUMN(Applications!A1:E1)+64) <> "${keyColumn}")`
+  const row2 = `FILTER({${cells.headers};${cells.cells}}, CHAR(COLUMN(Applications!${fromColumn}1:${toColumn}1)+64) <> "${keyColumn}")`
   const formula = `={${row1};${row2}}`
   return formula
 }
 
-async function getFilteredApplications(keyColumn, key) {
-  const formula = `${getApplicationsFilterFormula(keyColumn, key)}`
+exports.getFilteredApplications = async function (
+  fromColumn,
+  toColumn,
+  keyColumn,
+  key,
+) {
+  const formula = `${getApplicationsFilterFormula(
+    fromColumn,
+    toColumn,
+    keyColumn,
+    key,
+  )}`
 
   const doc = await initDoc()
   const sheet = await doc.addSheet()
@@ -97,24 +107,6 @@ async function getFilteredApplications(keyColumn, key) {
   await doc.deleteSheet(sheetId)
 
   return rows
-}
-
-exports.getUserApplications = async (email) => {
-  try {
-    const rows = await getFilteredApplications('B', email)
-    return rows
-  } catch (err) {
-    throw err
-  }
-}
-
-exports.getCountryApplications = async (country) => {
-  try {
-    const rows = await getFilteredApplications('C', country)
-    return rows
-  } catch (err) {
-    throw err
-  }
 }
 
 function objectFromRow(header, row) {

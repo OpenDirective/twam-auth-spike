@@ -4,11 +4,20 @@ Please make an application using this form.
 
 <!-- markdownlint-disable MD033 -->
 <style>
-  label > input:required::after {
-    content: " *";
-    color: red;
-  }
+label > input:required::after {
+  content: " *";
+  color: red;
+}
 
+table {
+  border-collapse: collapse;
+}
+
+td, th {
+  border: 1px solid #999;
+  padding: 0.5rem;
+  text-align: left;
+}
 </style>
 
 <form name="Application" method="POST" data-netlify="true" enctype="multipart/form-data" action="/app-ack">
@@ -33,6 +42,7 @@ Please make an application using this form.
   <p>
     <button type="submit">Send</button>
   </p>
+  <input type="hidden" name="status" value="open">
 </form>
 
 <hr>
@@ -41,7 +51,7 @@ Please make an application using this form.
   <p><button type="submit">Get My applications</button></p>
 </form>
 
-<pre id="rows"></pre>
+<div id="table"></div>
 
 <script defer>
 
@@ -51,35 +61,53 @@ async function  callFunctionWithAuth(url) {
       method: 'GET', // *GET, POST, PUT, DELETE, etc.
       headers: {
         'Authorization': `Bearer ${token}`
-        // 'Content-Type': 'application/x-www-form-urlencoded',
       },
-      //    body: JSON.stringify(data) // body data type must match "Content-Type" header
     });
   return response.json(); // parses JSON response into native JavaScript objects
 }
 
-function sendForm(event, where) {
-  event.preventDefault()
-  const funct = event.target.action
-  callFunctionWithAuth(funct).then(({rows}) => {
-    const div = document.querySelector(where)
-    const text= rows.map((row)=>row.toString()).join('\r\n\r\n')
-    div.textContent=text
-  })
+function renderRow(row, isHeader) {
+  const cells = row.map((c,i) => isHeader ? `<th>${c}</th>` : `<td>${i==2 && c ? '<a href="'+c+'">file</a>' : c }</td>`);
+  return `<tr>${cells.join('')}</tr>`;
 }
 
-const form = document.querySelector('#getapps')
-form.onsubmit = (e) => sendForm(e, '#rows')
-
-window.addEventListener('load', onLoad, {once: true})
-function onLoad() {
-  const name = netlifyIdentity.currentUser().user_metadata.full_name
-  const nameElem = document.querySelector('input[type="text"]')
-  nameElem.value = name
-
-  const email = netlifyIdentity.currentUser().email
-  const emailElem = document.querySelector('input[type="email"]')
-  emailElem.value = email
+function renderTable(data) {
+  const rows = data.map((r, i) => renderRow(r, i == 0));
+  return `<table>\r\n${rows.join('\r\n')}\r\n</table>`;
 }
+
+function getApps(endPoint, where) {
+  event.preventDefault();
+  callFunctionWithAuth(endPoint).then(({ rows }) => {
+    const div = document.querySelector(where);
+    const html = renderTable(rows);
+    div.innerHTML = html;
+  });
+}
+function mkAppsHandler(where) {
+  return (e) => {
+    const uri = event.target.action;
+    getApps(uri, where);
+  };
+}
+
+function initPage() {
+
+  const form = document.querySelector('#getapps')
+  form.onsubmit = mkAppsHandler("#table");
+
+  window.addEventListener('load', onLoad, {once: true})
+  function onLoad() {
+    const name = netlifyIdentity.currentUser().user_metadata.full_name
+    const nameElem = document.querySelector('input[type="text"]')
+    nameElem.value = name
+
+    const email = netlifyIdentity.currentUser().email
+    const emailElem = document.querySelector('input[type="email"]')
+    emailElem.value = email
+  }
+}
+
+initPage()
 
 </script>
