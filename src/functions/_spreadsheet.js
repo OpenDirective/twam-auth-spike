@@ -43,6 +43,7 @@ exports.addApplication = async (data) => {
   }
 }
 
+const filledColumns = (nStr, str) => `SPLIT(REPT(",${str}", ${nStr}),",")`
 const sheet = 'Applications'
 const allRows = `COUNTA(${sheet}!B2:B9999)`
 const range = (fromColumn, toColumn) =>
@@ -53,39 +54,46 @@ const filter = (fromColumn, toColumn, exprColumn, expression) =>
     exprColumn,
   )} ${expression})`
 const filterResults = (fromColumn, toColumn, exprColumn, expr) => ({
-  cells: `${filter(fromColumn, toColumn, exprColumn, expr)}`,
-  rows: `COUNTA(${filter(exprColumn, exprColumn, exprColumn, expr)})`,
-  columns: `COLUMNS(${fromColumn}1:${toColumn}1)`,
+  headers: `INDIRECT("${sheet}!${fromColumn}1:${toColumn}1")`,
+  cells: `IFNA(${filter(
+    fromColumn,
+    toColumn,
+    exprColumn,
+    expr,
+  )}, {SPLIT(REPT(",-", COLUMNS(${fromColumn}1:${toColumn}1)),",")})`,
+  nrows: `COUNTA(${filter(exprColumn, exprColumn, exprColumn, expr)})`,
+  ncolumns: `COLUMNS(${fromColumn}1:${toColumn}1)`,
 })
 
 function getApplicationsFilterFormula(keyColumn, key) {
   const cells = filterResults('A', 'E', keyColumn, '="' + key + '"')
-  const cellsRange = `ADDRESS(ROW()+1,COLUMN())&":"&ADDRESS(ROW()+${cells.rows},COLUMN()+${cells.columns}-1)`
-  const row1 = `{${cellsRange}, "${key}", SPLIT(REPT(", ", ${cells.columns}-2),",")}` // need as many columns as in cells!
-  const row2 = `${cells.cells}`
+  const cellsRange = `ADDRESS(ROW()+1,COLUMN())&":"&ADDRESS(ROW()+${cells.nrows}+1,COLUMN()+${cells.ncolumns}-2)`
+  const row1 = `{${cellsRange}, "${key}", SPLIT(REPT(", ", ${cells.ncolumns}-3),",")}` // need as many columns as in cells!
+  const row2 = `FILTER({${cells.headers};${cells.cells}}, CHAR(COLUMN(Applications!A1:E1)+64) <> "${keyColumn}")`
   const formula = `={${row1};${row2}}`
   return formula
 }
 
 async function getFilteredApplications(keyColumn, key) {
-  const formula = `${getApplicationsFilterFormula('B', key)}`
+  const formula = `${getApplicationsFilterFormula(keyColumn, key)}`
 
   const doc = await initDoc()
   const sheet = await doc.addSheet()
   const sheetId = sheet.sheetId
 
-  await sheet.loadCells('A1') // Need?
+  await sheet.loadCells('A1:B1')
   const cell = sheet.getCell(0, 0)
   cell.formula = formula
   await sheet.saveCells([cell])
   const range = cell.value
   await sheet.loadCells(range)
+  const cell2 = sheet.getCell(0, 1)
   const dataCells = [...sheet._cells.slice(1, sheet._cells.length)]
-  const rows = dataCells.map((row) =>
-    row.map((c) =>
+  const rows = dataCells.map((row) => {
+    return row.map((c) =>
       c._rawData.formattedValue ? c._rawData.formattedValue : '',
-    ),
-  )
+    )
+  })
   await doc.deleteSheet(sheetId)
 
   return rows
@@ -138,5 +146,24 @@ exports.getUserData = async (email) => {
     return userData
   } catch (err) {
     throw err
+  }
+}
+
+// handler for debug in local dev
+exports.handler = async (event, context) => {
+  try {
+    const result = await exports.getCountryApplications('zambia')
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ result }),
+    }
+  } catch (err) {
+    console.error('error ocurred in processing ', event)
+    console.error(err)
+    return {
+      statusCode: 500,
+      body: err.toString(),
+    }
   }
 }
