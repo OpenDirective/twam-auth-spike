@@ -39,7 +39,7 @@ function hyperlink(cell) {
   }
 
 function renderRow(row, isHeader) {
-  const cells = row.map((c,i) => isHeader ? `<th>${c}</th>` : `<td>${i==3 && c ? hyperlink(c) : c}</td>`);
+  const cells = row.map((c,i) => isHeader ? `<th>${c}</th>` : `<td>${i==3 && c.includes(',') ? hyperlink(c) : c}</td>`);
   return `<tr>${cells.join('')}</tr>`;
 }
 
