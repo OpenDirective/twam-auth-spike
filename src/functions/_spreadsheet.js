@@ -56,23 +56,30 @@ const filter = (fromColumn, toColumn, exprColumn, expression) =>
     exprColumn,
     exprColumn,
   )} ${expression})`
-const filterResults = (fromColumn, toColumn, exprColumn, expr) => ({
-  headers: `INDIRECT("${sheet}!${fromColumn}1:${toColumn}1")`,
-  cells: `IFNA(${filter(
-    fromColumn,
-    toColumn,
-    exprColumn,
-    expr,
-  )}, {SPLIT(REPT(",-", COLUMNS(${fromColumn}1:${toColumn}1)),",")})`,
-  nrows: `COUNTA(${filter(exprColumn, exprColumn, exprColumn, expr)})`,
-  ncolumns: `COLUMNS(${fromColumn}1:${toColumn}1)`,
-})
+
+const filterResults = (fromColumn, toColumn, keyColumn, keyExpr) => {
+  const nrows = `COUNTA(${filter(keyColumn, keyColumn, keyColumn, keyExpr)})`
+  const ncolumns = `COLUMNS(${fromColumn}1:${toColumn}1)`
+
+  return {
+    headers: `INDIRECT("${sheet}!${fromColumn}1:${toColumn}1")`,
+    cells: `IFNA(${filter(
+      fromColumn,
+      toColumn,
+      keyColumn,
+      keyExpr,
+    )}, {SPLIT(REPT(",-", COLUMNS(${fromColumn}1:${toColumn}1)),",")})`,
+    nrows,
+    ncolumns,
+    columnFilter: `CHAR(COLUMN(Applications!${fromColumn}1:${toColumn}1)+64) <> "${keyColumn}"`, //`{TRUE, TRUE, TRUE}`, // as many rows as in Applications sheet,
+    range: `ADDRESS(ROW()+1,COLUMN())&":"&ADDRESS(ROW()+${nrows}+1,COLUMN()+${ncolumns}-2)`,
+  }
+}
 
 function getApplicationsFilterFormula(fromColumn, toColumn, keyColumn, key) {
   const cells = filterResults(fromColumn, toColumn, keyColumn, '="' + key + '"')
-  const cellsRange = `ADDRESS(ROW()+1,COLUMN())&":"&ADDRESS(ROW()+${cells.nrows}+1,COLUMN()+${cells.ncolumns}-2)`
-  const row1 = `{${cellsRange}, "${key}", SPLIT(REPT(", ", ${cells.ncolumns}-3),",")}` // need as many columns as in cells!
-  const row2 = `FILTER({${cells.headers};${cells.cells}}, CHAR(COLUMN(Applications!${fromColumn}1:${toColumn}1)+64) <> "${keyColumn}")`
+  const row1 = `{${cells.range}, "${key}", SPLIT(REPT(", ", ${cells.ncolumns}-2-1),",")}` // need as many columns as in cells!
+  const row2 = `FILTER({${cells.headers};${cells.cells}}, ${cells.columnFilter})`
   const formula = `={${row1};${row2}}`
   return formula
 }
