@@ -18,6 +18,14 @@ td, th {
   padding: 0.5rem;
   text-align: left;
 }
+
+th:nth-child(1),
+th:nth-child(2),
+td:nth-child(1),
+td:nth-child(2) {
+  display: none;
+}
+
 </style>
 
 <form name="Application" method="POST" data-netlify="true" enctype="multipart/form-data" action="/app-ack">
@@ -72,7 +80,7 @@ function hyperlink(cell) {
   }
 
 function renderRow(row, isHeader) {
-  const cells = row.map((c,i) => isHeader ? `<th>${c}</th>` : `<td>${i==2 && c.includes(',') ? hyperlink(c) : c}</td>`);
+  const cells = row.map((c,i) => isHeader ? `<th>${c}</th>` : `<td>${i==4 && c.includes(',') ? hyperlink(c) : c}</td>`);
   return `<tr>${cells.join('')}</tr>`;
 }
 

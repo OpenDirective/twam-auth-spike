@@ -23,14 +23,19 @@ td, th {
 
 <script defer>
 async function callFunctionWithAuth(url) {
-  const token = netlifyIdentity.currentUser().token.access_token;
+  const token = netlifyIdentity.currentUser().token.access_token
   const response = await fetch(url, {
     method: "GET", // *GET, POST, PUT, DELETE, etc.
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  });
-  return response.json(); // parses JSON response into native JavaScript objects
+  })
+  return response.json() // parses JSON response into native JavaScript objects
+}
+
+function editRow(row) {
+  const rowObj = document.querySelector(`[data-row="${row}"]`)
+  alert(row)
 }
 
 function hyperlink(cell) {
@@ -39,42 +44,43 @@ function hyperlink(cell) {
   }
 
 function renderRow(row, isHeader) {
-  const cells = row.map((c,i) => isHeader ? `<th>${c}</th>` : `<td>${i==3 && c.includes(',') ? hyperlink(c) : c}</td>`);
-  return `<tr>${cells.join('')}</tr>`;
+  const cells = row.map((c,i) => isHeader ? `<th>${c}</th>` : `<td>${i==4 && c.includes(',') ? hyperlink(c) : c}</td>`)
+  const editBtnCell = isHeader ? '<th></th>' : `<td><button onclick="editRow(${row[0]})">edit</button></td>`
+  return `<tr data-row="${row[0]}">${cells.join('')}${editBtnCell}</tr>`
 }
 
 function renderTable(data) {
-  const rows = data.map((r, i) => renderRow(r, i == 0));
-  return `<table>\r\n${rows.join('\r\n')}\r\n</table>`;
+  const rows = data.map((r, i) => renderRow(r, i == 0))
+  return `<table>\r\n${rows.join('\r\n')}\r\n</table>`
 }
 
 function getApps(endPoint, where) {
-  event.preventDefault();
+  event.preventDefault()
   callFunctionWithAuth(endPoint).then(({ rows }) => {
-    const div = document.querySelector(where);
-    const html = renderTable(rows);
-    div.innerHTML = html;
-  });
+    const div = document.querySelector(where)
+    const html = renderTable(rows)
+    div.innerHTML = html
+  })
 }
 
 function mkAppsHandler(where) {
   return (e) => {
-    const uri = event.target.action;
-    getApps(uri, where);
-  };
+    const uri = event.target.action
+    getApps(uri, where)
+  }
 }
 
 function initPage() {
-  const form = document.querySelector("#getapps");
-  form.onsubmit = mkAppsHandler("#table");
+  const form = document.querySelector("#getapps")
+  form.onsubmit = mkAppsHandler("#table")
 
-  window.addEventListener("load", onLoad, { once: true });
+  window.addEventListener("load", onLoad, { once: true })
   function onLoad() {
-    const country = netlifyIdentity.currentUser().app_metadata.country;
-    const countryElems = document.querySelectorAll(".country");
+    const country = netlifyIdentity.currentUser().app_metadata.country
+    const countryElems = document.querySelectorAll(".country")
     countryElems.forEach((e) => {
-      e.textContent = country;
-    });
+      e.textContent = country
+    })
   }
 }
 
