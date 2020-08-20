@@ -6,14 +6,14 @@ exports.initAppMetadata = async function initRoles(event, context) {
   let body = {}
 
   //TODO only call for twam.uk mail
-  const userData = await getUserData(user.email)
+  /*const userData = await getUserData(user.email)
   if (userData.email) {
     const { roles, country } = userData
     body = {
       body: JSON.stringify({ app_metadata: { roles, country } }),
     }
     console.log(userData, body)
-  } else {
+  } else */ {
     if (!currentRoles || currentRoles.length == 0) {
       body = {
         body: JSON.stringify({ app_metadata: { roles: ['applicant'] } }),
@@ -21,5 +21,6 @@ exports.initAppMetadata = async function initRoles(event, context) {
     }
   }
 
+  console.log({ statusCode: 200, ...body })
   return { statusCode: 200, ...body }
 }
