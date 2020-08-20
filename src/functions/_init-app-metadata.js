@@ -6,7 +6,7 @@ exports.initAppMetadata = async function initRoles(event, context) {
   const { user } = JSON.parse(event.body)
   const { roles: currentRoles, country } = user.app_metadata
   let body = {}
-  //
+
   //TODO only call for twam.uk mail
   /*const userData = await getUserData(user.email)
   if (userData.email) {
