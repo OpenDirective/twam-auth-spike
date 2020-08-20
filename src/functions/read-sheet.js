@@ -8,7 +8,7 @@ exports.handler = async (event, context) => {
   const API_ENDPOINT =
     'https://script.google.com/macros/s/AKfycby9IHg3awfiHQF8zuRFRGFUqfAkMSOajMRXbF3PemYKvAPjABg/exec'
   const url = `${API_ENDPOINT}?email=${encodeURIComponent(email)}`
-  console.log(url)
+
   return fetch(url, { headers: { Accept: 'application/json' } })
     .then((response) => response.text())
     .then((text) => ({

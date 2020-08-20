@@ -11,7 +11,7 @@ async function getUserApplications(email) {
 
 async function getCountryApplications(country) {
   try {
-    const rows = await getFilteredApplications('A', 'G', 'D', country)
+    const rows = await getFilteredApplications('A', 'H', 'D', country)
     return rows
   } catch (err) {
     throw err

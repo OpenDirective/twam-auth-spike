@@ -40,6 +40,11 @@ td, th {
   text-align: left;
 }
 
+th:nth-child(7),
+td:nth-child(7) {
+  display: none;
+}
+
 .modal-background {
   position: fixed;
   top: 0;
@@ -107,9 +112,12 @@ function onKeydown(e) {
   }
 };
 
+let g_rows = []
+
 function editRow(row) {
 
-  var rowData
+  rowData = g_rows.filter((r) => r[0] == row)
+
   function completeEdit(event) {
     const  data = new FormData(form)
     var output = ""
@@ -118,20 +126,22 @@ function editRow(row) {
     }
     event.preventDefault();
 
+
     alert(output)
     closeModal()
   }
 
   const template = document.querySelector('#modal');
   const clone = template.content.cloneNode(true);
-  //td = clone.querySelectorAll("td");
-  const body = document.querySelector("body");
   const autofocus = clone.querySelector("[autofocus]");
   const form = clone.querySelector("#editrow");
   form.addEventListener("submit", completeEdit, false)
-  body.appendChild(clone)
+
   autofocus.focus()
   window.addEventListener("keydown", onKeydown)
+
+  const body = document.querySelector("body");
+  body.appendChild(clone)
 
  }
 
@@ -156,6 +166,7 @@ function getApps(endPoint, where) {
   callFunctionWithAuth(endPoint).then(({ rows }) => {
     const div = document.querySelector(where)
     const html = renderTable(rows)
+    g_rows = rows // for now we keep the data in memory
     div.innerHTML = html
   })
 }

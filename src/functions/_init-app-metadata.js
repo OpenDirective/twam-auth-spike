@@ -1,7 +1,8 @@
-const { getUserData } = require('./_spreadsheet')
+//const { getUserData } = require('./_spreadsheet')
 
 exports.initAppMetadata = async function initRoles(event, context) {
-  const { user } = JSON.parse(event.body)
+  console.log('iam')
+  //const { user } = JSON.parse(event.body)
   const { roles: currentRoles, country } = user.app_metadata
   let body = {}
 
@@ -21,6 +22,7 @@ exports.initAppMetadata = async function initRoles(event, context) {
     }
   }
 
-  console.log({ statusCode: 200, ...body })
+  console.log(body)
+
   return { statusCode: 200, ...body }
 }

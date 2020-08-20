@@ -157,7 +157,20 @@ exports.getUserData = async (email) => {
   }
 }
 
+/*
+exports.readCellsForEdit = async function (row, fromColumn, toColumn) {
+  const doc = await initDoc()
+  const sheet = doc.sheetsById[process.env.GOOGLE_SPREADSHEET_PEOPLE_SHEET_ID] // People tab
+
+  await sheet.loadCells(`${fromColumn}${row}:${toColumn}${row}`)
+  const c = sheet.getCellByA1(`${fromColumn}${row}`)
+  const c2 = sheet.getCellA1(`${toColumn}${row}`)
+  console.log(c, c2)
+  // return function() {}
+}
+
 // handler for debug in local dev
+
 exports.handler = async (event, context) => {
   try {
     const result = await exports.getCountryApplications('zambia')
@@ -175,3 +188,4 @@ exports.handler = async (event, context) => {
     }
   }
 }
+*/
