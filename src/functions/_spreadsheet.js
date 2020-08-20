@@ -36,6 +36,7 @@ exports.addApplication = async (data) => {
     const sheet =
       doc.sheetsById[process.env.GOOGLE_SPREADSHEET_APPLICATIONS_SHEET_ID]
     const row = {
+      row: `=ROW()`,
       ...data,
       file: `=HYPERLINK("${data.file.url}","${data.file.filename}")`,
     }

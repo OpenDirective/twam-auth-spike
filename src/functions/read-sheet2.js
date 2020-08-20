@@ -2,7 +2,7 @@ const { getFilteredApplications } = require('./_spreadsheet')
 
 async function getUserApplications(email) {
   try {
-    const rows = await getFilteredApplications('B', 'F', 'B', email) // Need B as is removed
+    const rows = await getFilteredApplications('A', 'G', 'C', email) // Need B as is removed
     return rows
   } catch (err) {
     throw err
@@ -11,7 +11,7 @@ async function getUserApplications(email) {
 
 async function getCountryApplications(country) {
   try {
-    const rows = await getFilteredApplications('A', 'G', 'C', country)
+    const rows = await getFilteredApplications('A', 'G', 'D', country)
     return rows
   } catch (err) {
     throw err

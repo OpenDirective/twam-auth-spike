@@ -9,6 +9,26 @@ Your country is: <span class="country"></span>.
 
 <div id="table"></div>
 
+<template id="modal">
+  <div id="modalContainer">
+    <div class="modal-background" onclick="closeModal"></div>
+    <div class="modal" role="dialog" aria-modal="true" >
+      <form id="editrow" >
+        <div>
+          <label><input type="radio" id="pending" name="status" value="pending" required>pending</label>
+          <label><input type="radio" id="accepted" name="status" value="accepted" required>accepted</label>
+          <label><input type="radio" id="rejected" name="status" value="rejeted" required>rejected</label>
+          <label>Evaluation:<br/> <textarea name="evaluation" required></textarea></label>
+        </div>
+        <div>
+          <button type="submit">OK</button>
+        </div>
+      </form>
+      <button autofocus onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</template>
+
 <style>
 table {
   border-collapse: collapse;
@@ -19,6 +39,30 @@ td, th {
   padding: 0.5rem;
   text-align: left;
 }
+
+.modal-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+}
+
+.modal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(100vw - 4em);
+  max-width: 32em;
+  max-height: calc(100vh - 4em);
+  overflow: auto;
+  transform: translate(-50%,-50%);
+  padding: 1em;
+  border-radius: 0.2em;
+  background: white;
+}
+
 </style>
 
 <script defer>
@@ -33,10 +77,63 @@ async function callFunctionWithAuth(url) {
   return response.json() // parses JSON response into native JavaScript objects
 }
 
-function editRow(row) {
-  const rowObj = document.querySelector(`[data-row="${row}"]`)
-  alert(row)
+function closeModal()
+{
+  window.removeEventListener("keydown", onKeydown)
+  const modal = document.querySelector('#modalContainer')
+  modal.parentNode.removeChild(modal)
 }
+
+function onKeydown(e) {
+  if (e.key === 'Escape') {
+    closeModal();
+    return;
+  }
+
+  if (e.key === 'Tab') {
+    // trap focus
+    const modal = document.querySelector(`[role="dialog"]`)
+    const nodes = modal.querySelectorAll('*');
+    const tabbable = Array.from(nodes).filter(n => n.tabIndex >= 0);
+
+    let index = tabbable.indexOf(document.activeElement);
+    if (index === -1 && e.shiftKey) index = 0;
+
+    index += tabbable.length + (e.shiftKey ? -1 : 1);
+    index %= tabbable.length;
+
+    tabbable[index].focus();
+    e.preventDefault();
+  }
+};
+
+function editRow(row) {
+
+  var rowData
+  function completeEdit(event) {
+    const  data = new FormData(form)
+    var output = ""
+    for (const entry of data) {
+      output = output + entry[0] + "=" + entry[1] + "\r";
+    }
+    event.preventDefault();
+
+    alert(output)
+    closeModal()
+  }
+
+  const template = document.querySelector('#modal');
+  const clone = template.content.cloneNode(true);
+  //td = clone.querySelectorAll("td");
+  const body = document.querySelector("body");
+  const autofocus = clone.querySelector("[autofocus]");
+  const form = clone.querySelector("#editrow");
+  form.addEventListener("submit", completeEdit, false)
+  body.appendChild(clone)
+  autofocus.focus()
+  window.addEventListener("keydown", onKeydown)
+
+ }
 
 function hyperlink(cell) {
   const tuple = cell.split(',')
