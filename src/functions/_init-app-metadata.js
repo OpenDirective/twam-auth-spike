@@ -2,7 +2,8 @@
 
 exports.initAppMetadata = async function initRoles(event, context) {
   console.log('iam')
-  //const { user } = JSON.parse(event.body)
+
+  const { user } = JSON.parse(event.body)
   const { roles: currentRoles, country } = user.app_metadata
   let body = {}
 
