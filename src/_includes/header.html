@@ -115,12 +115,14 @@
   <button id="signup" class="hidden">Sign Up</button>
   <button id="login" class="hidden">Log In</button>
   <button id="logout" class="hidden">Log Out</button>
-  <div id="name" class="hidden"></div>
+  <a id="name" class="hidden" href="/user-info"> </a>
 </header>
 
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
 <script defer>
+  let g_user
+
   function renderUser() {
     netlifyIdentity.setLocale('en')
 
@@ -183,9 +185,12 @@
         return
       }
 
+      const role = user && getRoles(user)[0]
       const roleMsg =
-        user && getRoles(user)[0] == 'applicant'
+        role == 'applicant'
           ? '<br/><br/>You can <a href="/applicant">apply for a TWAM toolkit.</a>'
+          : role == 'rdm'
+          ? '<br/><br/>You can <a href="/rdm">view your country\'s applications.</a>'
           : ''
 
       msg.innerHTML = user
@@ -206,14 +211,21 @@
 
     // TODO - handle init followed by login
     netlifyIdentity.on('init', (user) => {
+      g_user = user
+      console.log('init', user, netlifyIdentity.currentUser())
+
+      debugger
       handleUserStateChange(user, 'init')
     })
     netlifyIdentity.on('login', (user) => {
+      console.log('login', user)
+      debugger
       netlifyIdentity.close()
       handleUserStateChange(user, 'login')
       //gotoPage(getRolePage(user))
     })
     netlifyIdentity.on('logout', (user) => {
+      g_user = null
       netlifyIdentity.close()
       handleUserStateChange(user, 'logout')
       gotoPage('/')

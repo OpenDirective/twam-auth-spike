@@ -1,8 +1,9 @@
 # Hello RDM
 
+<!-- markdownlint-disable MD033 -->
+
 Your country is: <span class="country"></span>.
 
-<!-- markdownlint-disable MD033 -->
 <form id="getapps" action="/.netlify/functions/read-sheet2?type=country" method="GET">
   <p><button type="submit">Get <span class="country"></span> applications</button></p>
 </form>
@@ -13,16 +14,23 @@ Your country is: <span class="country"></span>.
   <div id="modalContainer">
     <div class="modal-background" onclick="closeModal"></div>
     <div class="modal" role="dialog" aria-modal="true" >
-      <form id="editrow" >
+      <form id="editrow" action="/.netlify/functions/update-app" method="PUT">
+        <p>Application status:</p>
         <div>
           <label><input type="radio" id="pending" name="status" value="pending" required>pending</label>
-          <label><input type="radio" id="accepted" name="status" value="accepted" required>accepted</label>
-          <label><input type="radio" id="rejected" name="status" value="rejeted" required>rejected</label>
-          <label>Evaluation:<br/> <textarea name="evaluation" required></textarea></label>
         </div>
         <div>
-          <button type="submit">OK</button>
+          <label><input type="radio" id="accepted" name="status" value="accepted" required>accepted</label>
         </div>
+        <div>
+          <label><input type="radio" id="rejected" name="status" value="rejected" required>rejected</label>
+        </div>
+        <p>
+          <label>Evaluation:<br/> <textarea id="evaluation" name="evaluation" required></textarea></label>
+        </p>
+        <p>
+          <button type="submit">OK</button>
+        </p>
       </form>
       <button autofocus onclick="closeModal()">Cancel</button>
     </div>
@@ -71,13 +79,17 @@ td:nth-child(7) {
 </style>
 
 <script defer>
-async function callFunctionWithAuth(url) {
+async function callFunctionWithAuth(url, method="GET", data={}) {
   const token = netlifyIdentity.currentUser().token.access_token
+  const body = (method == "PUT") ? {body: JSON.stringify(data)} : {}
+  console.log(data, method, body)
   const response = await fetch(url, {
-    method: "GET", // *GET, POST, PUT, DELETE, etc.
+    method, // *GET, POST, PUT, DELETE, etc.
     headers: {
       Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
     },
+    ...body
   })
   return response.json() // parses JSON response into native JavaScript objects
 }
@@ -115,27 +127,30 @@ function onKeydown(e) {
 let g_rows = []
 
 function editRow(row) {
-
-  rowData = g_rows.filter((r) => r[0] == row)
+  rowData = g_rows.filter((r) => r[0] == row)[0]
 
   function completeEdit(event) {
-    const  data = new FormData(form)
-    var output = ""
-    for (const entry of data) {
-      output = output + entry[0] + "=" + entry[1] + "\r";
-    }
-    event.preventDefault();
+    event.preventDefault()
 
+    const data = new FormData(event.target)
+    const form = event.target
+    const endPoint = form.action
+    const method = form.attributes.getNamedItem('method').value // frm.method is always 'get'
+    callFunctionWithAuth(endPoint, method, data).then(() => {
+      closeModal()
+    })
 
-    alert(output)
-    closeModal()
   }
 
   const template = document.querySelector('#modal');
-  const clone = template.content.cloneNode(true);
+  const clone = template.content.firstElementChild.cloneNode(true);
   const autofocus = clone.querySelector("[autofocus]");
   const form = clone.querySelector("#editrow");
   form.addEventListener("submit", completeEdit, false)
+  const statusElem = clone.querySelector(`#${rowData[5]}`)
+  statusElem.checked = true
+  const evaluation = clone.querySelector("#evaluation")
+  evaluation.value = rowData[6]
 
   autofocus.focus()
   window.addEventListener("keydown", onKeydown)

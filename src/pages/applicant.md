@@ -46,7 +46,7 @@ td:nth-child(2) {
   <p>
     <button type="submit">Send</button>
   </p>
-  <input type="hidden" name="status" value="open">
+  <input type="hidden" name="status" value="pending">
 </form>
 
 <hr>
