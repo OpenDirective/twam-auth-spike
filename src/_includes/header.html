@@ -115,22 +115,17 @@
   <button id="signup" class="hidden">Sign Up</button>
   <button id="login" class="hidden">Log In</button>
   <button id="logout" class="hidden">Log Out</button>
-  <div id="name" class="hidden"></div>
+  <a id="name" class="hidden" href="/user-info"> </a>
 </header>
-
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
 <script defer>
   function renderUser() {
-    netlifyIdentity.setLocale('en')
-
     const signupButton = document.getElementById('signup')
     const loginButton = document.getElementById('login')
     const logoutButton = document.getElementById('logout')
     signupButton.addEventListener('click', () => netlifyIdentity.open('signup'))
     loginButton.addEventListener('click', () => netlifyIdentity.open('login'))
     logoutButton.addEventListener('click', () => netlifyIdentity.logout())
-    const nameDiv = document.getElementById('name')
 
     function getRoles(user) {
       const roles = user.app_metadata.roles
@@ -159,7 +154,8 @@
       }
     }
 
-    function updateUserInfo(user, event) {
+    function updateUserInfoUI(user, event) {
+      const nameDiv = document.getElementById('name')
       if (user) {
         const { full_name } = user.user_metadata
 
@@ -183,9 +179,12 @@
         return
       }
 
+      const role = user && getRoles(user)[0]
       const roleMsg =
-        user && getRoles(user)[0] == 'applicant'
+        role == 'applicant'
           ? '<br/><br/>You can <a href="/applicant">apply for a TWAM toolkit.</a>'
+          : role == 'rdm'
+          ? '<br/><br/>You can <a href="/rdm">view your country\'s applications.</a>'
           : ''
 
       msg.innerHTML = user
@@ -197,39 +196,18 @@
         : '<h1>Please log into your account.<br /><br />Sign Up first if you need an account.</h1>'
     }
 
-    const handleUserStateChange = (user, event) => {
-      if (window.location.pathname == '/') {
-        updateHomePageMsg(user)
+    const handleUserState = ({ user, state }) => {
+      if (event == 'logout') {
+        gotoPage('/')
+      } else {
+        updateUserInfoUI(user, state)
+        if (window.location.pathname == '/') {
+          updateHomePageMsg(user)
+        }
       }
-      updateUserInfo(user, event)
     }
 
-    // TODO - handle init followed by login
-    netlifyIdentity.on('init', (user) => {
-      handleUserStateChange(user, 'init')
-    })
-    netlifyIdentity.on('login', (user) => {
-      netlifyIdentity.close()
-      handleUserStateChange(user, 'login')
-      //gotoPage(getRolePage(user))
-    })
-    netlifyIdentity.on('logout', (user) => {
-      netlifyIdentity.close()
-      handleUserStateChange(user, 'logout')
-      gotoPage('/')
-    })
-    function handleEsc(e) {
-      if (e.key == 'Escape') {
-        netlifyIdentity.close()
-      }
-    }
-    netlifyIdentity.on('open', (_) => {
-      document.body.addEventListener('keydown', handleEsc)
-    })
-    netlifyIdentity.on('close', (_) => {
-      document.body.removeEventListener('keydown', handleEsc)
-    })
-    netlifyIdentity.on('error', (err) => console.error('Error', err))
+    handleUserStateEvent(handleUserState)
   }
 
   renderUser()
