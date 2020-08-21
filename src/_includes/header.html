@@ -118,21 +118,14 @@
   <a id="name" class="hidden" href="/user-info"> </a>
 </header>
 
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-
 <script defer>
-  let g_user
-
   function renderUser() {
-    netlifyIdentity.setLocale('en')
-
     const signupButton = document.getElementById('signup')
     const loginButton = document.getElementById('login')
     const logoutButton = document.getElementById('logout')
     signupButton.addEventListener('click', () => netlifyIdentity.open('signup'))
     loginButton.addEventListener('click', () => netlifyIdentity.open('login'))
     logoutButton.addEventListener('click', () => netlifyIdentity.logout())
-    const nameDiv = document.getElementById('name')
 
     function getRoles(user) {
       const roles = user.app_metadata.roles
@@ -161,7 +154,8 @@
       }
     }
 
-    function updateUserInfo(user, event) {
+    function updateUserInfoUI(user, event) {
+      const nameDiv = document.getElementById('name')
       if (user) {
         const { full_name } = user.user_metadata
 
@@ -202,46 +196,18 @@
         : '<h1>Please log into your account.<br /><br />Sign Up first if you need an account.</h1>'
     }
 
-    const handleUserStateChange = (user, event) => {
-      if (window.location.pathname == '/') {
-        updateHomePageMsg(user)
-      }
-      updateUserInfo(user, event)
-    }
-
-    // TODO - handle init followed by login
-    netlifyIdentity.on('init', (user) => {
-      g_user = user
-      console.log('init', user, netlifyIdentity.currentUser())
-
-      debugger
-      handleUserStateChange(user, 'init')
-    })
-    netlifyIdentity.on('login', (user) => {
-      console.log('login', user)
-      debugger
-      netlifyIdentity.close()
-      handleUserStateChange(user, 'login')
-      //gotoPage(getRolePage(user))
-    })
-    netlifyIdentity.on('logout', (user) => {
-      g_user = null
-      netlifyIdentity.close()
-      handleUserStateChange(user, 'logout')
-      gotoPage('/')
-    })
-    function handleEsc(e) {
-      if (e.key == 'Escape') {
-        netlifyIdentity.close()
+    const handleUserState = ({ user, state }) => {
+      if (event == 'logout') {
+        gotoPage('/')
+      } else {
+        updateUserInfoUI(user, state)
+        if (window.location.pathname == '/') {
+          updateHomePageMsg(user)
+        }
       }
     }
-    netlifyIdentity.on('open', (_) => {
-      document.body.addEventListener('keydown', handleEsc)
-    })
-    netlifyIdentity.on('close', (_) => {
-      document.body.removeEventListener('keydown', handleEsc)
-    })
-    netlifyIdentity.on('error', (err) => console.error('Error', err))
+
+    handleUserStateEvent(handleUserState)
   }
 
   renderUser()
