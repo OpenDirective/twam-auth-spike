@@ -1,4 +1,4 @@
-//const { getUserData } = require('./_spreadsheet')
+const { getUserData } = require('./_spreadsheet')
 
 exports.initAppMetadata = async function initRoles(event, context) {
   console.log('iam')
