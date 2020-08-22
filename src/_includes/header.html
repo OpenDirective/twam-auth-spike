@@ -198,6 +198,7 @@
 
     const handleUserState = ({ user, state }) => {
       if (event == 'logout') {
+        console.log('going home')
         gotoPage('/')
       } else {
         updateUserInfoUI(user, state)
