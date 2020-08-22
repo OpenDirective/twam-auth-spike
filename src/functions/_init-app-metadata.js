@@ -16,7 +16,7 @@ exports.initAppMetadata = async function initRoles(event, context) {
   if (user.email.includes('@twam.uk') && userData.email) {
     const { roles, country } = userData
     if (
-      JSON.stringify(roles) != JSON.stringify(currentRoles) &&
+      JSON.stringify(roles) != JSON.stringify(currentRoles) ||
       country != currentCountry
     ) {
       body = {
