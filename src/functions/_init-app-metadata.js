@@ -9,12 +9,14 @@ exports.initAppMetadata = async function initRoles(event, context) {
 
   // TODO parse data entered in spreadsheet
   const userData = await getUserData(user.email)
-  console.log(
-    user.email.includes('@twam.uk'),
-    JSON.stringify(userData, null, 2),
-  )
   if (user.email.includes('@twam.uk') && userData.email) {
     const { roles, country } = userData
+    console.log(
+      JSON.stringify(roles),
+      JSON.stringify(currentRoles),
+      country,
+      currentCountry,
+    )
     if (
       JSON.stringify(roles) != JSON.stringify(currentRoles) ||
       country != currentCountry
