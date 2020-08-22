@@ -78,6 +78,7 @@
     border-radius: 40px;
   }
 
+  .twam-app-header a.hidden,
   .twam-app-header button.hidden,
   .twam-app-header #name.hidden {
     display: none;
@@ -107,8 +108,9 @@
     /></a>
     <span class="title">TWAM App: Proof of concept:</span>
     <span class="menu"
-      ><a href="/all">Public</a> | <a href="/applicant">Applicant</a> |
-      <a href="/rdm">RDM</a></span
+      ><a href="/all">Public</a>&nbsp;
+      <a class="hidden" href="/applicant">Applicant</a>&nbsp;
+      <a class="hidden" href="/rdm">RDM</a></span
     >
   </div>
 
@@ -120,6 +122,8 @@
 
 <script defer>
   function renderUser() {
+    const applicantLink = document.querySelector('[href="/applicant"]')
+    const rdmLink = document.querySelector('[href="/rdm"]')
     const signupButton = document.getElementById('signup')
     const loginButton = document.getElementById('login')
     const logoutButton = document.getElementById('logout')
@@ -158,13 +162,20 @@
       const nameDiv = document.getElementById('name')
       if (user) {
         const { full_name } = user.user_metadata
-
+        const role = user && getRoles(user)[0]
+        if (role == 'applicant') {
+          applicantLink.classList.remove('hidden')
+        } else if (role == 'rdm') {
+          rdmLink.classList.remove('hidden')
+        }
         signupButton.classList.add('hidden')
         loginButton.classList.add('hidden')
         logoutButton.classList.remove('hidden')
         nameDiv.innerHTML = `${full_name}` //TODO handle long names
         nameDiv.classList.remove('hidden')
       } else {
+        applicantLink.classList.add('hidden')
+        rdmLink.classList.add('hidden')
         signupButton.classList.remove('hidden')
         loginButton.classList.remove('hidden')
         logoutButton.classList.add('hidden')
