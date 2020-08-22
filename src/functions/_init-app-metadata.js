@@ -26,7 +26,7 @@ exports.initAppMetadata = async function initRoles(event, context) {
     }
   }
 
-  console.log(`${user.email} ${body}`)
+  console.log(`${user.email} ${JSON.stringify(body)}`)
 
   return { statusCode: 200, ...body }
 }
