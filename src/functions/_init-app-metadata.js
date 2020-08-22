@@ -4,26 +4,29 @@ exports.initAppMetadata = async function initRoles(event, context) {
   console.log('iam')
 
   const { user } = JSON.parse(event.body)
-  const { roles: currentRoles, country } = user.app_metadata
+  const { roles: currentRoles, currentCountry } = user.app_metadata
   let body = {}
 
-  //TODO only call for twam.uk mail
-  /*const userData = await getUserData(user.email)
-  if (userData.email) {
+  // TODO parse data entered in spreadsheet
+  const userData = await getUserData(user.email)
+  if (user.email.includes('@twam.uk') && userData.email) {
     const { roles, country } = userData
-    body = {
-      body: JSON.stringify({ app_metadata: { roles, country } }),
-    }
-    console.log(userData, body)
-  } else */ {
-    if (!currentRoles || currentRoles.length == 0) {
+    if (
+      JSON.stringify(roles) != JSON.stringify(currentRoles) &&
+      country != currentCountry
+    ) {
       body = {
-        body: JSON.stringify({ app_metadata: { roles: ['applicant'] } }),
+        body: JSON.stringify({ app_metadata: { roles, country } }),
       }
+    }
+  } else if (!currentRoles || currentRoles.length == 0) {
+    console.log(`${user.email} setting applicant`)
+    body = {
+      body: JSON.stringify({ app_metadata: { roles: ['applicant'] } }),
     }
   }
 
-  console.log(body)
+  console.log(`${user.email} ${body}`)
 
   return { statusCode: 200, ...body }
 }
