@@ -9,6 +9,7 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({
         message: `POST Success - added row ${newRowNumber}`,
       }),
+      headers: { 'Content-Type': 'application/json' },
     }
   } catch (err) {
     console.error('error ocurred in processing ', event)
@@ -16,6 +17,7 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 500,
       body: err.toString(),
+      headers: { 'Content-Type': 'text/plain' },
     }
   }
 }

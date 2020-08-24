@@ -51,24 +51,13 @@ td:nth-child(2) {
 
 <hr>
 
-<form id="getapps" action="/.netlify/functions/read-sheet2?type=user" method="GET">
+<form id="getapps" action="/.netlify/functions/read-sheet?type=user" method="GET">
   <p><button type="submit">Get My applications</button></p>
 </form>
 
 <div id="table"></div>
 
 <script defer>
-
-async function  callFunctionWithAuth(url) {
-  const token = netlifyIdentity.currentUser().token.access_token
-  const response = await fetch(url, {
-      method: 'GET', // *GET, POST, PUT, DELETE, etc.
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-    })
-  return response.json() // parses JSON response into native JavaScript objects
-}
 
 function hyperlink(cell) {
   const tuple = cell.split(',')

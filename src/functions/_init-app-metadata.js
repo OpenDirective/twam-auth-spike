@@ -19,6 +19,7 @@ exports.initAppMetadata = async function initRoles(event, context) {
     if (!currentRoles || currentRoles.length == 0) {
       body = {
         body: JSON.stringify({ app_metadata: { roles: ['applicant'] } }),
+        headers: { 'Content-Type': 'application/json' },
       }
     }
   }
