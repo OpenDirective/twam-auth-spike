@@ -2,53 +2,45 @@
 
 <!-- markdownlint-disable MD033 -->
 
-User @ init:
-
-<pre id="user-init"></pre>
-
-User @ login:
+User and jwt:
 
 <pre id="user-login"></pre>
 
-User in localStorage @ pageload:
-
 <pre id="expires"></pre>
-<pre id="local-storage"></pre>
 
 <button id="refresh" onclick="refresh()">Refresh JWT</button>
 
-<p>JWT:</p>
+<p>New token:</p>
 <pre id="jwt"></pre>
 
 <script defer>
 
+function formatToken(token) {
+  return JSON.stringify(JSON.parse(atob(token.split('.')[1])), null, 2)
+}
+
 function format(obj) {
   const exp = new Date(obj.token.expires_at)
+  const expired = new Date() > exp
   const us = JSON.stringify(obj, null, 2)
-  return `${exp}\r\n\r\n${us}`
+  const token = formatToken(obj.token.access_token)
+
+  return `${(expired) ? 'EXPIRED!:' : 'Expires:'} ${exp}\r\n\r\n${us}\r\n\r\n${token}`
 }
+
 handleUserStateEvent(({user, state}) => {
-  if (state == 'init') {
-    document.querySelector('#user-init').textContent= user ? format(user) : ''
-  }
-  else if (state == 'login') {
+if (state == 'login') {
     document.querySelector('#user-login').textContent= user ? format(user) : ''
   }
   if (state == 'logout') {
-    document.querySelector('#user-init').textContent= ''
     document.querySelector('#user-login').textContent= ''
   }
 })
 
-const userObj = JSON.parse(localStorage.getItem('gotrue.user'))
-document.querySelector('#local-storage').textContent= userObj ? format(userObj) : ''
-
 function refresh() {
   netlifyIdentity.refresh().then((jwt)=>{
-    document.querySelector('#jwt').textContent = JSON.stringify(jwt, null, 2)
+    document.querySelector('#jwt').textContent = formatToken(jwt)
   })
 }
-
-
 
 </script>
