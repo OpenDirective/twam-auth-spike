@@ -7,7 +7,7 @@ function handleUserStateEvent(fn) {
 }
 
 function initNetlifyIdentity() {
-  console.log(netlifyIdentity.CurrentUser())
+  console.log(netlifyIdentity.currentUser())
   netlifyIdentity.currentUser() && netlifyIdentity.refresh()
 
   netlifyIdentity.setLocale('en')
