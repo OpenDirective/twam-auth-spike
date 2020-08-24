@@ -7,9 +7,6 @@ function handleUserStateEvent(fn) {
 }
 
 function initNetlifyIdentity() {
-  console.log(netlifyIdentity.currentUser())
-  netlifyIdentity.currentUser() && netlifyIdentity.refresh()
-
   netlifyIdentity.setLocale('en')
 
   function sendStateEvent(state, user) {
@@ -23,6 +20,7 @@ function initNetlifyIdentity() {
   })
 
   netlifyIdentity.on('login', (user) => {
+    netlifyIdentity.refresh()
     netlifyIdentity.close()
     sendStateEvent('login', user)
   })
