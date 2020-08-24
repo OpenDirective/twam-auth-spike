@@ -1,10 +1,10 @@
-# Hello RDM
+# Hello Regional Development Manager
 
 <!-- markdownlint-disable MD033 -->
 
 Your country is: <span class="country"></span>.
 
-<form id="getapps" action="/.netlify/functions/read-sheet2?type=country" method="GET">
+<form id="getapps" action="/.netlify/functions/read-sheet?type=country" method="GET">
   <p><button type="submit">Get <span class="country"></span> applications</button></p>
 </form>
 
@@ -28,6 +28,7 @@ Your country is: <span class="country"></span>.
         <p>
           <label>Evaluation:<br/> <textarea id="evaluation" name="evaluation" required></textarea></label>
         </p>
+          <input type="hidden" id="row" name="row" />
         <p>
           <button type="submit">OK</button>
         </p>
@@ -79,20 +80,6 @@ td:nth-child(7) {
 </style>
 
 <script defer>
-async function callFunctionWithAuth(url, method="GET", data={}) {
-  const token = netlifyIdentity.currentUser().token.access_token
-  const body = (method == "PUT") ? {body: JSON.stringify(data)} : {}
-  console.log(data, method, body)
-  const response = await fetch(url, {
-    method, // *GET, POST, PUT, DELETE, etc.
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
-    ...body
-  })
-  return response.json() // parses JSON response into native JavaScript objects
-}
 
 function closeModal()
 {
@@ -127,37 +114,41 @@ function onKeydown(e) {
 let g_rows = []
 
 function editRow(row) {
-  rowData = g_rows.filter((r) => r[0] == row)[0]
+  const rowData = g_rows[0].filter((r) => r[0] == row)[0]
+  const renderer = g_rows[1]
+
 
   function completeEdit(event) {
     event.preventDefault()
 
-    const data = new FormData(event.target)
     const form = event.target
     const endPoint = form.action
-    const method = form.attributes.getNamedItem('method').value // frm.method is always 'get'
-    callFunctionWithAuth(endPoint, method, data).then(() => {
+    callFunctionWithAuth(endPoint, form).then((columns) => {
       closeModal()
-    })
-
+      rowData[5] = columns.status // TODO make this generic
+      rowData[6] = columns.evaluation
+      renderer()
+    }).catch((e)=>{console.log(e.message)})
   }
 
-  const template = document.querySelector('#modal');
-  const clone = template.content.firstElementChild.cloneNode(true);
-  const autofocus = clone.querySelector("[autofocus]");
-  const form = clone.querySelector("#editrow");
-  form.addEventListener("submit", completeEdit, false)
-  const statusElem = clone.querySelector(`#${rowData[5]}`)
-  statusElem.checked = true
-  const evaluation = clone.querySelector("#evaluation")
-  evaluation.value = rowData[6]
+  function renderEditForm(status, evaluation) {
+    const template = document.querySelector('#modal');
+    const clone = template.content.firstElementChild.cloneNode(true);
+    const form = clone.querySelector("#editrow");
+    form.addEventListener("submit", completeEdit, false)
+    form.querySelector("#row").value = row
+    form.querySelector(`#${status}`).checked = true
+    form.querySelector("#evaluation").value = evaluation
+    clone.querySelector("[autofocus]").focus()
+    return clone
+  }
 
-  autofocus.focus()
+  const clone = renderEditForm(rowData[5], rowData[6])
+
   window.addEventListener("keydown", onKeydown)
 
   const body = document.querySelector("body");
   body.appendChild(clone)
-
  }
 
 function hyperlink(cell) {
@@ -176,13 +167,20 @@ function renderTable(data) {
   return `<table>\r\n${rows.join('\r\n')}\r\n</table>`
 }
 
+function mkRenderer(where, rows) {
+  return () => {
+    const div = document.querySelector(where)
+    const html = renderTable(rows)
+    div.innerHTML = html
+  }
+}
+
 function getApps(endPoint, where) {
   event.preventDefault()
   callFunctionWithAuth(endPoint).then(({ rows }) => {
-    const div = document.querySelector(where)
-    const html = renderTable(rows)
-    g_rows = rows // for now we keep the data in memory
-    div.innerHTML = html
+    const renderer = mkRenderer(where, rows)
+    g_rows = [rows, renderer] // for now we keep the data in memory
+    renderer()
   })
 }
 

@@ -47,6 +47,29 @@ exports.addApplication = async (data) => {
   }
 }
 
+exports.updateApplication = async (rowN, columns) => {
+  try {
+    const doc = await initDoc()
+    const sheet =
+      doc.sheetsById[process.env.GOOGLE_SPREADSHEET_APPLICATIONS_SHEET_ID]
+    const rowData = (
+      await sheet.getRows({
+        offset: rowN - 2,
+        limit: 1,
+      })
+    )[0]
+
+    for (const col in columns) {
+      rowData[col] = columns[col]
+    }
+    await rowData.save()
+
+    return columns // assume all well
+  } catch (err) {
+    throw err
+  }
+}
+
 const filledColumns = (nStr, str) => `SPLIT(REPT(",${str}", ${nStr}),",")`
 const sheet = 'Applications'
 const allRows = `COUNTA(${sheet}!B2:B9999)`
