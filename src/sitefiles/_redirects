@@ -1,2 +1,7 @@
+# Two-step role-gate with fallback to home page
 /rdm/*	      200!  Role=rdm,admin
-/applicant/*  200!  Role=applicant,admin
+/rdm/*   /    302!
+
+# Two-step role-gate with fallback to home page
+/applicant/*        200!  Role=applicant,admin
+/applicant/*   /    302!

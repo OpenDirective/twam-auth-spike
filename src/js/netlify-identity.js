@@ -7,7 +7,9 @@ function handleUserStateEvent(fn) {
 }
 
 function initNetlifyIdentity() {
-  // TODO - handle init followed by login
+  console.log(netlify.CurrentUser())
+  netlifyIdentity.currentUser() && netlifyIdentity.refresh()
+
   netlifyIdentity.setLocale('en')
 
   function sendStateEvent(state, user) {
@@ -15,6 +17,7 @@ function initNetlifyIdentity() {
     window.dispatchEvent(event)
   }
 
+  // TODO - handle init followed by login
   netlifyIdentity.on('init', (user) => {
     sendStateEvent('init', user)
   })
