@@ -1,6 +1,6 @@
 const _USERSTATEEVENT = 'userstate'
 
-function handleUserStateEvent(fn) {
+function addUserStateHandler(fn) {
   window.addEventListener(_USERSTATEEVENT, (e) => {
     fn(e.detail)
   })

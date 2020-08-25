@@ -28,7 +28,7 @@ function format(obj) {
   return `${(expired) ? 'EXPIRED!:' : 'Expires:'} ${exp}\r\n\r\n${us}\r\n\r\n${token}`
 }
 
-handleUserStateEvent(({user, state}) => {
+addUserStateHandler(({user, state}) => {
 if (state == 'login') {
     document.querySelector('#user-login').textContent= user ? format(user) : ''
   }
