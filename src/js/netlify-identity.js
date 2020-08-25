@@ -77,6 +77,6 @@ async function callFunctionWithAuth(url, data, method = 'GET') {
   if (response.ok) {
     return response.json()
   } else {
-    throw Error(`Error updating sheet: ${response.text()}`)
+    throw Error(`Error calling Function ${url}: ${response.text()}`)
   }
 }
