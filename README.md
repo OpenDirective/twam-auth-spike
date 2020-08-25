@@ -2,14 +2,11 @@
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/02cf942d-4bcb)-4216-b334-bc6f7ebd05fe/deploy-status)](https://app.netlify.com/sites/festive-hoover-9c12c5/deploys)
 
-The [TWAM](https://www.twam.uk/) app.
+Proof of Concept for the Tools with A Mission charity ([TWAM](https://www.twam.uk/)) app.
 
-Code and other resources go here....
+## Tech. stack
 
-## Production URI
-
-https://festive-hoover-9c12c5.netlify.app
-
-## Branch URI
-
-https://a-and-o-proof--festive-hoover-9c12c5.netlify.app/
+- Eleventy
+- No frontend framework :)
+- Netlify hosting, forms, identity and identity widget
+- Google sheets for db and back office access
