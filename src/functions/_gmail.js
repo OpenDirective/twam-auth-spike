@@ -16,11 +16,12 @@ const { JWT } = require('google-auth-library')
 // https://developers.google.com/admin-sdk/directory/v1/guides/delegation
 // Set env vars for the service key in GOOGLE_SERVICE_ACCOUNT_EMAIL & GOOGLE_PRIVATE_KEY
 // GMAIL_SENDING_USER is the email address that the service delegates for
+// ensure you set the used scopes here when enabling the global delegation
 async function initServiceClient() {
   return new JWT({
     email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
     key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-    scopes: ['https://mail.google.com/'],
+    scopes: ['https://mail.google.com/'], // better to pick narrower scopes
     subject: process.env.GMAIL_SENDING_USER,
   })
 }
