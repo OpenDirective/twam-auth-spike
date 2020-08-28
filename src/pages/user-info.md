@@ -13,6 +13,8 @@ User and jwt:
 <p>New token:</p>
 <pre id="jwt"></pre>
 
+<button id="email" onclick="email()">Test email</button>
+
 <script defer>
 
 function formatToken(token) {
@@ -41,6 +43,10 @@ function refresh() {
   netlifyIdentity.refresh().then((jwt)=>{
     document.querySelector('#jwt').textContent = formatToken(jwt)
   })
+}
+
+function email() {
+ callFunctionWithAuth('/.netlify/functions/send-email')
 }
 
 </script>

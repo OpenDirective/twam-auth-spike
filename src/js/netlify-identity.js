@@ -48,7 +48,7 @@ function initNetlifyIdentity() {
 async function callFunctionWithAuth(url, data, method = 'GET') {
   function getOptions(method, data) {
     const options = {
-      ...{ method },
+      method,
       ...(data instanceof HTMLFormElement
         ? {
             body: new URLSearchParams([...new FormData(data)]),

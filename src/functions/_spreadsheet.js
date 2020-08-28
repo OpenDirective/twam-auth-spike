@@ -1,6 +1,5 @@
 if (!process.env.NETLIFY) {
   // use .enc file for local dev and assume netlify variables in CI
-  // TODO can this not be run time?
   require('dotenv').config()
 }
 
@@ -181,6 +180,7 @@ exports.getUserData = async (email) => {
 }
 
 /*
+// Version with appropriate Action script in place
 exports.readCellsForEdit = async function (row, fromColumn, toColumn) {
   const doc = await initDoc()
   const sheet = doc.sheetsById[process.env.GOOGLE_SPREADSHEET_PEOPLE_SHEET_ID] // People tab
