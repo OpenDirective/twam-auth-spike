@@ -77,6 +77,6 @@ async function callFunctionWithAuth(url, data, method = 'GET') {
   if (response.ok) {
     return response.json()
   } else {
-    throw Error(`Error calling Function ${url}: ${response.text()}`)
+    throw new Error(`Error calling Function ${url}: ${response.text()}`)
   }
 }

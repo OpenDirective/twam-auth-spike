@@ -1,13 +1,15 @@
 const { addApplication } = require('./_spreadsheet')
+const { sendNotification } = require('./_notifications')
 
 exports.handler = async (event, context) => {
   try {
     const data = JSON.parse(event.body).payload.data
-    const newRowNumber = await addApplication(data)
+    const rowObj = await addApplication(data)
+    await sendNotification('application', rowObj)
     return {
       statusCode: 200,
       body: JSON.stringify({
-        message: `POST Success - added row ${newRowNumber}`,
+        message: `POST Success - added row ${row.row}`,
       }),
       headers: { 'Content-Type': 'application/json' },
     }
@@ -17,7 +19,7 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 500,
       body: err.toString(),
-      headers: { 'Content-Type': 'text/plain' },
+      headers: { 'Content-Type': 'text/plain; charset=UTF-8' },
     }
   }
 }

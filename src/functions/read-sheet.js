@@ -50,7 +50,7 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 500,
       body: err.toString(),
-      headers: { 'Content-Type': 'text/plain' },
+      headers: { 'Content-Type': 'text/plain; charset=UTF-8' },
     }
   }
 }

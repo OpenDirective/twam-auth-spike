@@ -13,10 +13,12 @@ if (!process.env.GOOGLE_SPREADSHEET_ID)
   throw new Error('no GOOGLE_SPREADSHEET_ID env var set')
 if (!process.env.GOOGLE_SPREADSHEET_APPLICATIONS_SHEET_ID)
   throw new Error('no GOOGLE_SPREADSHEET_APPLICATIONS_SHEET_ID env var set')
-if (!process.env.GOOGLE_SPREADSHEET_PEOPLE_SHEET_ID)
-  throw new Error('no GOOGLE_SPREADSHEET_PEOPLE_SHEET_ID env var set')
+if (!process.env.GOOGLE_SPREADSHEET_ASSIGNMENTS_SHEET_ID)
+  throw new Error('no GOOGLE_SPREADSHEET_ASSIGNMENTS_SHEET_ID env var set')
+if (!process.env.GOOGLE_SPREADSHEET_ASSIGNMENTS_SHEET_ID)
+  throw new Error('no GOOGLE_SPREADSHEET_EMAILS_SHEET_ID env var set')
 
-// TODO switch to decorator pattern
+// TODO switch to decorator pattern and cash doc
 async function initDoc() {
   const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID)
 
@@ -40,7 +42,8 @@ exports.addApplication = async (data) => {
       file: `=HYPERLINK("${data.file.url}","${data.file.filename}")`,
     }
     const addedRow = await sheet.addRow(row)
-    return addedRow._rowNumber - 1
+
+    return objectFromRow(sheet.headerValues, addedRow)
   } catch (err) {
     throw err
   }
@@ -51,19 +54,23 @@ exports.updateApplication = async (rowN, columns) => {
     const doc = await initDoc()
     const sheet =
       doc.sheetsById[process.env.GOOGLE_SPREADSHEET_APPLICATIONS_SHEET_ID]
-    const rowData = (
+    const row = (
       await sheet.getRows({
         offset: rowN - 2,
         limit: 1,
       })
     )[0]
 
-    for (const col in columns) {
-      rowData[col] = columns[col]
+    if (!row) {
+      throw new Error('Row not found')
     }
-    await rowData.save()
 
-    return columns // assume all well
+    for (const col in columns) {
+      row[col] = columns[col]
+    }
+    await row.save()
+
+    return objectFromRow(sheet.headerValues, row)
   } catch (err) {
     throw err
   }
@@ -149,31 +156,71 @@ exports.getFilteredApplications = async function (
 
 function objectFromRow(header, row) {
   return header.reduce(function (result, item, index) {
-    result[item] = row[item].trim().toLowerCase()
+    result[item] = row[item] == undefined ? undefined : row[item].trim()
     return result
   }, {})
 }
 
-function userObjectFromRow(header, row) {
+function parseRoles(roles) {
+  return roles.split(',').map((r) => r.trim().toLowerCase())
+}
+
+function assignmentObjectFromRow(header, row) {
   const obj = objectFromRow(header, row)
   if (obj.roles) {
-    obj.roles = obj.roles.split(',').map((r) => r.trim().toLowerCase())
+    obj.roles = parseRoles(obj.roles)
   }
   return obj
 }
 
-exports.getUserData = async (email) => {
+exports.getAssignmentForEmail = async function (email) {
   try {
     const doc = await initDoc()
-    const sheet = doc.sheetsById[process.env.GOOGLE_SPREADSHEET_PEOPLE_SHEET_ID] // People tab
-
+    const sheet =
+      doc.sheetsById[process.env.GOOGLE_SPREADSHEET_ASSIGNMENTS_SHEET_ID] // People tab
     const rows = await sheet.getRows()
-    const userDataRow = rows.filter((row) => row.email == email)[0]
-    const userData = userDataRow
-      ? userObjectFromRow(sheet.headerValues, userDataRow)
+    const assignmentRow = rows.filter((row) => row.email == email)[0]
+    const assignment = assignmentRow
+      ? assignmentObjectFromRow(sheet.headerValues, assignmentRow)
       : {}
 
-    return userData
+    return assignment
+  } catch (err) {
+    throw err
+  }
+}
+
+exports.getAssignmentForRoleCountry = async function (role, country) {
+  try {
+    const doc = await initDoc()
+    const sheet =
+      doc.sheetsById[process.env.GOOGLE_SPREADSHEET_ASSIGNMENTS_SHEET_ID] // People tab
+    const rows = await sheet.getRows()
+    const assignmentRow = rows.filter(
+      (row) => parseRoles(row.roles).includes(role) && row.country == country,
+    )[0]
+    const assignment = assignmentRow
+      ? assignmentObjectFromRow(sheet.headerValues, assignmentRow)
+      : {}
+
+    return assignment
+  } catch (err) {
+    throw err
+  }
+}
+
+exports.getEmailForEvent = async function (event) {
+  try {
+    const doc = await initDoc()
+    const sheet = doc.sheetsById[process.env.GOOGLE_SPREADSHEET_EMAILS_SHEET_ID] // People tab
+    const rows = await sheet.getRows()
+    const emailRow = rows.filter((row) => row.event == event)[0]
+    if (!emailRow) {
+      throw new Error('No email for event ')
+    }
+    const email = emailRow ? objectFromRow(sheet.headerValues, emailRow) : {}
+
+    return email
   } catch (err) {
     throw err
   }
@@ -183,7 +230,7 @@ exports.getUserData = async (email) => {
 // Version with appropriate Action script in place
 exports.readCellsForEdit = async function (row, fromColumn, toColumn) {
   const doc = await initDoc()
-  const sheet = doc.sheetsById[process.env.GOOGLE_SPREADSHEET_PEOPLE_SHEET_ID] // People tab
+  const sheet = doc.sheetsById[process.env.GOOGLE_SPREADSHEET_ASSIGNMENTS_SHEET_ID] // People tab
 
   await sheet.loadCells(`${fromColumn}${row}:${toColumn}${row}`)
   const c = sheet.getCellByA1(`${fromColumn}${row}`)

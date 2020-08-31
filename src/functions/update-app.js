@@ -1,5 +1,6 @@
 const querystring = require('querystring')
 const { updateApplication } = require('./_spreadsheet')
+const { sendNotification } = require('./_notifications')
 
 exports.handler = async (event, context) => {
   const params = querystring.parse(event.body)
@@ -7,10 +8,11 @@ exports.handler = async (event, context) => {
   try {
     const { row, ...columns } = params
     const rowN = parseInt(row, 10)
-    const newColumns = await updateApplication(rowN, columns)
+    const rowObj = await updateApplication(rowN, columns)
+    await sendNotification('evaluation', rowObj)
     return {
       statusCode: 200,
-      body: JSON.stringify(newColumns),
+      body: JSON.stringify(columns), // assume they added OK
       headers: { 'Content-Type': 'application/json' },
     }
   } catch (err) {
@@ -18,7 +20,7 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 500,
       body: err.toString(),
-      headers: { 'Content-Type': 'text/plain' },
+      headers: { 'Content-Type': '; charset=UTF-8' },
     }
   }
 }

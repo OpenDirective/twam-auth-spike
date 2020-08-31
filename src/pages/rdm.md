@@ -117,7 +117,6 @@ function editRow(row) {
   const rowData = g_rows[0].filter((r) => r[0] == row)[0]
   const renderer = g_rows[1]
 
-
   function completeEdit(event) {
     event.preventDefault()
 

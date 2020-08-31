@@ -32,7 +32,7 @@ async function initServiceClient() {
 //
 // This is the plain text body of the message. Note the blank line
 // between the header information and the body of the message.
-exports.sendEmail = async function (emailBody) {
+exports.sendRawEmail = async function (emailBody) {
   const client = await initServiceClient()
 
   // see https://github.com/googleapis/gaxios
@@ -45,4 +45,24 @@ exports.sendEmail = async function (emailBody) {
     body: emailBody,
   }
   return await client.request(options)
+}
+
+const field = (f, v) => (v ? f + ': ' + v + '\r\n' : '')
+
+exports.sendEmail = async function ({
+  to = undefined,
+  cc = undefined,
+  bcc = undefined,
+  subject = '',
+  message = '',
+} = {}) {
+  if (!to) {
+    throw new Error('"To" field is required')
+  }
+
+  const email = `${field('Subject', subject)}${field('To', to)}${field(
+    'cc',
+    cc,
+  )}${field('bcc', bcc)}\r\n${message}`
+  exports.sendRawEmail(email)
 }
