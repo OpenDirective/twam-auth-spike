@@ -1,4 +1,4 @@
-const { getAssignmentforEmail } = require('./_spreadsheet')
+const { getAssignmentForEmail } = require('./_spreadsheet')
 
 exports.initAppMetadata = async function initRoles(event, context) {
   console.log('iam')
@@ -8,7 +8,7 @@ exports.initAppMetadata = async function initRoles(event, context) {
   let body = {}
 
   // TODO parse data entered in spreadsheet
-  const assignment = await getAssignmentforEmail(user.email)
+  const assignment = await getAssignmentForEmail(user.email)
   if (user.email.includes('@twam.uk') && assignment.email) {
     const { role, country } = assignment
     if (
