@@ -14,7 +14,7 @@ function parseTemplate(templ, data) {
   return compiled(data)
 }
 
-function formatFormDetails(formData) {
+function formatDetails(formData) {
   const { ip, user_agent, referer, ...data } = formData
   let str = ''
 
@@ -29,34 +29,34 @@ function formatFormDetails(formData) {
   return str
 }
 
-exports.sendNotification = async function (event, formData) {
+exports.sendNotification = async function (event, data) {
   try {
-    if (!event || !formData.country) {
+    if (!event || !data.country) {
       throw new Error('Event and country must be defined')
     }
 
     const email = await getEmailForEvent(event)
     const recipient = await getAssignmentForRoleCountry(
       email.recipient,
-      formData.country,
+      data.country,
     )
     if (!recipient.email) {
       throw new Error('Recipient not found for event')
     }
 
-    const data = {
-      ...formData,
+    const templData = {
+      ...data,
       ...{
         recipient: email.recipient,
         event,
-        details: formatFormDetails(formData),
+        details: formatDetails(data),
       },
     }
 
     const notification = {
       to: recipient.email,
-      subject: parseTemplate(email.subject, data),
-      message: parseTemplate(email.message, data),
+      subject: parseTemplate(email.subject, templData),
+      message: parseTemplate(email.message, templData),
     }
     if (email.cc) {
       notification.cc = email.cc
