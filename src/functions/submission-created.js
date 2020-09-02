@@ -5,7 +5,7 @@ exports.handler = async (event, context) => {
   try {
     const data = JSON.parse(event.body).payload.data
     const rowObj = await addApplication(data)
-    console.log(await sendNotification('application', rowObj))
+    await sendNotification('application', rowObj)
     return {
       statusCode: 200,
       body: JSON.stringify({
