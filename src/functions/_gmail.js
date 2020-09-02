@@ -64,5 +64,5 @@ exports.sendEmail = async function ({
     'cc',
     cc,
   )}${field('bcc', bcc)}\r\n${message}`
-  exports.sendRawEmail(email)
+  return exports.sendRawEmail(email)
 }

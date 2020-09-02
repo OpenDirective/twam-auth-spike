@@ -64,8 +64,9 @@ exports.sendNotification = async function (event, data) {
     if (email.bcc) {
       notification.bcc = email.bcc
     }
-    sendEmail(notification)
+    return sendEmail(notification)
   } catch (err) {
+    console.log(err)
     throw err
   }
 }

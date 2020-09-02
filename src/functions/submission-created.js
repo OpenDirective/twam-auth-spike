@@ -4,9 +4,8 @@ const { sendNotification } = require('./_notifications')
 exports.handler = async (event, context) => {
   try {
     const data = JSON.parse(event.body).payload.data
-    console.log(data)
     const rowObj = await addApplication(data)
-    await sendNotification('application', rowObj)
+    console.log(await sendNotification('application', rowObj))
     return {
       statusCode: 200,
       body: JSON.stringify({
