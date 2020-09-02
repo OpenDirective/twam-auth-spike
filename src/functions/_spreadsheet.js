@@ -31,6 +31,22 @@ async function initDoc() {
   return doc
 }
 
+let cache = {
+  doc: undefined,
+  sheetRows: undefined,
+}
+
+async function getSheetRows(sheetId, filter) {
+  if (!cache.doc) {
+    cache.doc = await initDoc()
+  }
+  if (!cache.sheetRows[sheetId]) {
+    const sheet = cache.doc.sheetsById[sheetId]
+    cache.sheetRows[sheetId] = await sheet.getRows()
+  }
+  return cache.sheetRows[sheetId]
+}
+
 exports.addApplication = async (data) => {
   try {
     const doc = await initDoc()
@@ -39,7 +55,9 @@ exports.addApplication = async (data) => {
     const row = {
       row: `=ROW()`,
       ...data,
-      file: `=HYPERLINK("${data.file.url}","${data.file.filename}")`,
+    }
+    if (data.file) {
+      row.file = `=HYPERLINK("${data.file.url}","${data.file.filename}")`
     }
     const addedRow = await sheet.addRow(row)
 
