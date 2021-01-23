@@ -15,12 +15,12 @@
   "license": "proprietary",
   "homepage": "https://deploy-preview-3--twam-gallant-swirles-d68516.netlify.app/",
   "devDependencies": {
-    "@11ty/eleventy": "^0.11.0",
+    "@11ty/eleventy": "^0.11.1",
     "dotenv": "^8.2.0"
   },
   "dependencies": {
-    "google-auth-library": "^6.0.6",
-    "google-spreadsheet": "^3.0.13",
+    "google-auth-library": "^6.1.4",
+    "google-spreadsheet": "^3.1.15",
     "lodash.template": "^4.5.0"
   }
 }
