@@ -1,6 +1,6 @@
 if (!process.env.NETLIFY) {
-  // use .enc file for local dev and assume netlify variables in CI
-  require('dotenv').config()
+  // use .env file for local dev and assume netlify variables in CI
+  require('dotenv').config({ path: 'src/.env' })
 }
 
 const { GoogleSpreadsheet } = require('google-spreadsheet')
@@ -163,8 +163,8 @@ exports.getFilteredApplications = async function (
       return raw.hyperlink
         ? `${raw.hyperlink},${raw.formattedValue}`
         : raw.formattedValue
-        ? raw.formattedValue
-        : ''
+          ? raw.formattedValue
+          : ''
     })
   })
   await doc.deleteSheet(sheetId)

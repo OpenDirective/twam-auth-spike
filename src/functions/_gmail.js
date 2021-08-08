@@ -1,6 +1,6 @@
 if (!process.env.NETLIFY) {
   // use .enc file for local dev and assume netlify variables in CI
-  require('dotenv').config()
+  require('dotenv').config({ path: 'src/.env' })
 }
 
 if (!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL)
