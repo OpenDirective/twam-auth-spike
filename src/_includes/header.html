@@ -219,7 +219,11 @@
     }
 
     addUserStateHandler(handleUserState)
+    handleUserState({ state: 'init', user: null }) // can't safely use use netlifyIdentity.on init
   }
 
-  renderUser()
+  initNetlifyIdentity()
+  window.addEventListener('load', () => {
+    renderUser()
+  })
 </script>

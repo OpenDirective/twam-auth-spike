@@ -7,17 +7,14 @@ function addUserStateHandler(fn) {
 }
 
 function initNetlifyIdentity() {
+  // NB don't use on init as broken in local devlocal
+
   netlifyIdentity.setLocale('en')
 
   function sendStateEvent(state, user) {
     const event = new CustomEvent(_USERSTATEEVENT, { detail: { state, user } })
     window.dispatchEvent(event)
   }
-
-  // TODO - handle init followed by login
-  netlifyIdentity.on('init', (user) => {
-    sendStateEvent('init', user)
-  })
 
   netlifyIdentity.on('login', (user) => {
     netlifyIdentity.refresh()
@@ -42,7 +39,9 @@ function initNetlifyIdentity() {
     document.body.removeEventListener('keydown', handleEsc)
   })
 
-  netlifyIdentity.on('error', (err) => console.error('Error', err))
+  netlifyIdentity.on('error', (err) => {
+    console.error('Netlify Identity error', err)
+  })
 }
 
 async function callFunctionWithAuth(url, data, method = 'GET') {
@@ -51,17 +50,17 @@ async function callFunctionWithAuth(url, data, method = 'GET') {
       method,
       ...(data instanceof HTMLFormElement
         ? {
-            body: new URLSearchParams([...new FormData(data)]),
-            method: data.attributes.getNamedItem('method').value, // frm.method is always 'get' when using a Template element in Ffx
-          } // Content-Type is set for us
+          body: new URLSearchParams([...new FormData(data)]),
+          method: data.attributes.getNamedItem('method').value, // frm.method is always 'get' when using a Template element in Ffx
+        } // Content-Type is set for us
         : typeof data == 'string'
-        ? { body: data }
-        : typeof data == 'object'
-        ? {
-            body: JSON.stringify(data),
-            headers: { 'Content-Type': 'application/json' },
-          }
-        : {}),
+          ? { body: data }
+          : typeof data == 'object'
+            ? {
+              body: JSON.stringify(data),
+              headers: { 'Content-Type': 'application/json' },
+            }
+            : {}),
     }
 
     const token = netlifyIdentity.currentUser().token.access_token
