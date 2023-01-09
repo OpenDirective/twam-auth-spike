@@ -15,7 +15,7 @@
   "license": "proprietary",
   "homepage": "https://deploy-preview-3--twam-gallant-swirles-d68516.netlify.app/",
   "devDependencies": {
-    "@11ty/eleventy": "^0.11.1",
+    "@11ty/eleventy": "^1.0.2",
     "dotenv": "^8.2.0"
   },
   "dependencies": {
